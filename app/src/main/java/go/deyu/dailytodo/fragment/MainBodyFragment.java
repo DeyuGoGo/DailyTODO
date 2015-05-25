@@ -10,12 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.daimajia.swipe.util.Attributes;
+
 import java.sql.SQLException;
 
 import butterknife.InjectView;
 import butterknife.OnItemLongClick;
 import go.deyu.dailytodo.R;
-import go.deyu.dailytodo.adapter.MainBodyListViewAdapter;
+import go.deyu.dailytodo.adapter.MainBodySwipeListViewAdapter;
 import go.deyu.dailytodo.data.NotificationMessage;
 import go.deyu.dailytodo.model.MessageModel;
 import go.deyu.util.LOG;
@@ -29,7 +31,8 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
     private final Handler mUIHandler;
     private final int WHAT_MESSAGE_CHANGE = 0x0001;
     private final int WHAT_MESSAGE_ERROR = 0x0099;
-    private MainBodyListViewAdapter adapter;
+    private MainBodySwipeListViewAdapter adapter;
+    private MainBodySwipeListViewAdapter.SwipeLayoutListener listener ;
 
     @InjectView(R.id.fragment_main_body_listview)ListView bodyListView;
 
@@ -57,6 +60,12 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
                 }
             }
         };
+        listener = new MainBodySwipeListViewAdapter.SwipeLayoutListener() {
+            @Override
+            public void OnDeleteClick(int position) {
+                deleteMessage(position);
+            }
+        };
     }
 
     @Override
@@ -68,12 +77,19 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        adapter = new MainBodyListViewAdapter(getActivity(), model.getMessages());
+        adapter = new MainBodySwipeListViewAdapter(getActivity(), model.getMessages());
         bodyListView.setAdapter(adapter);
+        adapter.setMode(Attributes.Mode.Single);
+        adapter.registerSwipeLayoutListener(listener);
         model.registerListener(this);
         for(NotificationMessage m : model.getMessages()){
             LOG.d(TAG,"message " + m);
         }
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        adapter.unregisterSwipeLayoutListener(listener);
     }
 
     @Override

@@ -3,6 +3,7 @@
     package="go.deyu.dailytodo" >
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".app.App"

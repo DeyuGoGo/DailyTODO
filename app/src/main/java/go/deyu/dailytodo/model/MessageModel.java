@@ -57,11 +57,12 @@ public class MessageModel {
 
     public void changeMessageState(int id , int state){
         try{
+            LOG.d(TAG , "changeMessageState id " + id  + " state : " + state);
             NotificationMessage n = messageDao.queryForId(id);
             n.setState(state);
             messageDao.update(n);
         } catch (SQLException e){
-            LOG.d(TAG , "addMessage Exception : " + e);
+            LOG.d(TAG , "changeMessageState Exception : " + e);
         }
     }
 

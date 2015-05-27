@@ -49,6 +49,7 @@ public class MessageReceiver extends BroadcastReceiver {
         if(intent.getAction().equals(ACTION_FINISH_MESSAGE)){
             int id = intent.getIntExtra(EXTRA_INT_MESSAGE_ID , -1);
             int state = intent.getIntExtra(EXTRA_INT_MESSAGE_STATE , -1);
+            LOG.d(TAG , "ACTION_FINISH_MESSAGE id : " + id + " state : " + state);
             if(id == -1 || state == -1){
                 LOG.e(TAG , "no exist id or state!!!!!!");
                 return;

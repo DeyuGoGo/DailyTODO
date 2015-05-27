@@ -2,7 +2,6 @@ package go.deyu.dailytodo.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.data.NotificationMessage;
-import go.deyu.dailytodo.receiver.MessageReceiver;
+import go.deyu.util.LOG;
 
 /**
  * Created by huangeyu on 15/5/19.
@@ -72,23 +71,25 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
                 OnItemDelete(position);
             }
         });
+        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
+        NotificationMessage nm = mMessages.get(position);
+        finish_cb.setChecked(nm.getState() == NotificationMessage.STATE_FINISH);
+        finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int state = isChecked ? NotificationMessage.STATE_FINISH : NotificationMessage.STATE_NOT_FINISH;
+                OnItemStateChanged(position , state);
+            }
+        });
         return v;
     }
 
     @Override
     public void fillValues(int position, View convertView) {
         TextView message_Tv = (TextView) convertView.findViewById(R.id.tv_main_body_list_item);
-        CheckBox finish_cb = (CheckBox) convertView.findViewById(R.id.cb_finish);
         final NotificationMessage nm = mMessages.get(position);
         message_Tv.setText(nm.getMessage());
-        finish_cb.setChecked(nm.getState() == NotificationMessage.STATE_FINISH);
-        finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int messageid = nm.getId();
-                mContext.sendBroadcast(getStateChangeIntent(messageid, isChecked));
-            }
-        });
+        LOG.d("fillValues", "message : " + nm.getMessage() + " state : " + nm.getState());
         SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.swipe);
         swipeLayout.close();
     }
@@ -98,14 +99,6 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         return R.id.swipe;
     }
 
-    private Intent getStateChangeIntent(int id , boolean isChecked){
-        int state = isChecked ? NotificationMessage.STATE_FINISH : NotificationMessage.STATE_NOT_FINISH;
-        Intent i = new Intent();
-        i.setAction(MessageReceiver.ACTION_FINISH_MESSAGE);
-        i.putExtra(MessageReceiver.EXTRA_INT_MESSAGE_ID, id);
-        i.putExtra(MessageReceiver.EXTRA_INT_MESSAGE_STATE, state);
-        return i ;
-    }
 
     public void OnItemDelete(int position){
         for(SwipeLayoutListener l : mListeners){
@@ -114,7 +107,15 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         }
     }
 
+    public void OnItemStateChanged(int position , int state){
+        for(SwipeLayoutListener l : mListeners){
+            if(l==null)continue;
+            l.OnStateChanged(position, state);
+        }
+    }
+
     public interface SwipeLayoutListener{
         public void OnDeleteClick(int position);
+        public void OnStateChanged(int position , int state);
     }
 }

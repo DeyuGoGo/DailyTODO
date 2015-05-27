@@ -65,6 +65,11 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
             public void OnDeleteClick(int position) {
                 deleteMessage(position);
             }
+            @Override
+            public void OnStateChanged(int position, int state) {
+                LOG.d(TAG, "changeMessageState position : " + position + " state : " + state);
+                model.changeMessageState((int)adapter.getItemId(position) , state);
+            }
         };
     }
 
@@ -106,4 +111,5 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
         }
         adapter.notifyDataSetChanged();
     }
+
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <com.daimajia.swipe.SwipeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/delete"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif-light"
+            android:text="Delete"
+            android:gravity="center"
+            android:background="#FFFF4444"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/tv_main_body_list_item" />
+    <CheckBox
+        android:id="@+id/cb_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Finish?"
+        android:focusable="false"
+        android:layout_gravity="right"/>
+</FrameLayout>
+</com.daimajia.swipe.SwipeLayout>

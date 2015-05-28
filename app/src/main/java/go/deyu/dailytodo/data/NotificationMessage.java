@@ -17,7 +17,6 @@ public class NotificationMessage {
 
 //    0 = finish
 //    1 = not finish
-
     public static final int STATE_FINISH = 0;
     public static final int STATE_NOT_FINISH = 1;
 
@@ -58,6 +57,6 @@ public class NotificationMessage {
 
     @Override
     public String toString() {
-        return "this is id : " + id +" , message : " + message;
+        return "this is id : " + id +" , message : " + message + " , state : " + state;
     }
 }

@@ -91,6 +91,13 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
             LOG.d(TAG,"message " + m);
         }
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mUIHandler.sendEmptyMessage(WHAT_MESSAGE_CHANGE);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

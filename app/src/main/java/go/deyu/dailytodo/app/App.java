@@ -14,6 +14,7 @@ public class App extends Application {
     private MessageReceiver receiver ;
     private final String TAG =getClass().getSimpleName();
 
+//    in app create init some util tool and register MessageReceiver
     @Override
     public void onCreate() {
         super.onCreate();
@@ -23,5 +24,6 @@ public class App extends Application {
         receiver = new MessageReceiver();
         registerReceiver(receiver , receiver.getIntentFilter());
     }
+
 
 }

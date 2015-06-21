@@ -68,10 +68,12 @@ public class MessageModel {
 
     public void updateDaily(){
         try {
+            LOG.d(TAG , "updateDaily");
             UpdateBuilder<NotificationMessage, Integer> builder = messageDao.updateBuilder();
             builder.updateColumnValue("state", new Integer(NotificationMessage.STATE_NOT_FINISH));
             builder.update();
         } catch (SQLException e) {
+            LOG.e(TAG , "updateDaily fail : " + e);
             e.printStackTrace();
         }
     }

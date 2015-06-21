@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.data.NotificationMessage;
-import go.deyu.util.LOG;
 
 /**
  * Created by huangeyu on 15/5/19.
@@ -65,13 +64,13 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
     public View generateView(final int position, ViewGroup viewGroup) {
         View v = mLayoutInflater.inflate(R.layout.main_body_swipe_list_item, null);
         Button deleteBtn =(Button)(v.findViewById(R.id.delete));
+        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 OnItemDelete(position);
             }
         });
-        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
         NotificationMessage nm = mMessages.get(position);
         finish_cb.setChecked(nm.getState() == NotificationMessage.STATE_FINISH);
         finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -89,7 +88,7 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         TextView message_Tv = (TextView) convertView.findViewById(R.id.tv_main_body_list_item);
         final NotificationMessage nm = mMessages.get(position);
         message_Tv.setText(nm.getMessage());
-        LOG.d("fillValues", "message : " + nm.getMessage() + " state : " + nm.getState());
+
         SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.swipe);
         swipeLayout.close();
     }

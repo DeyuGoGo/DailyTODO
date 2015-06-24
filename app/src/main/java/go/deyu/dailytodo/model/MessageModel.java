@@ -9,8 +9,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import go.deyu.dailytodo.DailyCheck;
 import go.deyu.dailytodo.data.NotificationMessage;
 import go.deyu.dailytodo.dbh.DatabaseHelper;
+import go.deyu.dailytodo.notification.Noti;
+import go.deyu.dailytodo.tts.AndroidTTS;
+import go.deyu.dailytodo.tts.TTStoSpeak;
 import go.deyu.util.LOG;
 
 /**
@@ -66,7 +70,7 @@ public class MessageModel {
         }
     }
 
-    public void updateDaily(){
+    private void updateDaily(){
         try {
             LOG.d(TAG , "updateDaily");
             UpdateBuilder<NotificationMessage, Integer> builder = messageDao.updateBuilder();
@@ -78,6 +82,30 @@ public class MessageModel {
         }
     }
 
+    public void speakMessages(List<NotificationMessage> messages){
+        TTStoSpeak TTS = new AndroidTTS(mContext);
+        for(NotificationMessage m : messages)
+            TTS.speak(m.getMessage());
+    }
+
+    public void notiMessages(List<NotificationMessage> messages){
+        for(NotificationMessage m : messages)
+            notiMessage(m);
+    }
+
+    private void notiMessage(NotificationMessage m ){
+        Noti.showNotification(m.getMessage(), m.getId());
+    }
+
+    public List<NotificationMessage> getNotFinishMessage() {
+        List<NotificationMessage> messages = new ArrayList<NotificationMessage>();
+        for (NotificationMessage m : mMessages) {
+            if(m.getState()==NotificationMessage.STATE_NOT_FINISH){
+                messages.add(m);
+            }
+        }
+        return messages;
+    }
     public void deleteMessage(int id){
         try{
             messageDao.deleteById(id);
@@ -107,6 +135,13 @@ public class MessageModel {
 
     public List<NotificationMessage> getDBMessages() throws SQLException{
         return messageDao.queryForAll();
+    }
+
+    public void checkChangeDay(){
+        if(DailyCheck.isChangeDay()){
+            updateDaily();
+            DailyCheck.updateDayTime();
+        }
     }
 
     public interface OnMessageChangeListener{

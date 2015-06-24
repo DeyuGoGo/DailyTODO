@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import java.sql.SQLException;
+import java.util.List;
 
-import go.deyu.dailytodo.DailyCheck;
 import go.deyu.dailytodo.data.NotificationMessage;
 import go.deyu.dailytodo.model.MessageModel;
 import go.deyu.dailytodo.notification.Noti;
@@ -42,8 +42,10 @@ public class MessageReceiver extends BroadcastReceiver {
         if(model==null)return;
 
         if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
-            checkChangeDay(model);
-            notifyMessage(model);
+            model.checkChangeDay();
+            List<NotificationMessage> mNotfinishMessages =  model.getNotFinishMessage();
+            model.notiMessages(mNotfinishMessages);
+            model.speakMessages(mNotfinishMessages);
         }
 
         if(intent.getAction().equals(ACTION_FINISH_MESSAGE)){
@@ -65,10 +67,5 @@ public class MessageReceiver extends BroadcastReceiver {
             }
         }
     }
-    private void checkChangeDay(MessageModel model){
-        if(DailyCheck.isChangeDay()){
-            model.updateDaily();
-            DailyCheck.updateDayTime();
-        }
-    }
+
 }

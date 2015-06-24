@@ -19,6 +19,7 @@ public class MainActivity extends FragmentActivity {
     private MessageModel messageModel;
     private final String TAG = getClass().getSimpleName();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,7 @@ public class MainActivity extends FragmentActivity {
                     .commit();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

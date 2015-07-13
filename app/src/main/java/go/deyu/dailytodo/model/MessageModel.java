@@ -1,6 +1,7 @@
 package go.deyu.dailytodo.model;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.UpdateBuilder;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import go.deyu.dailytodo.DailyCheck;
+import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.data.NotificationMessage;
 import go.deyu.dailytodo.dbh.DatabaseHelper;
 import go.deyu.dailytodo.notification.Noti;
@@ -86,6 +88,20 @@ public class MessageModel {
         TTStoSpeak TTS = new AndroidTTS(mContext);
         for(NotificationMessage m : messages)
             TTS.speak(m.getMessage());
+    }
+    public void speakDefaultMessage(List<NotificationMessage> messages){
+        if(messages!=null && messages.size()>0) {
+            MediaPlayer mp = MediaPlayer.create(mContext, R.raw.nottodo);
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    // TODO Auto-generated method stub
+                    mp.release();
+                }
+            });
+            mp.start();
+        }
     }
 
     public void notiMessages(List<NotificationMessage> messages){

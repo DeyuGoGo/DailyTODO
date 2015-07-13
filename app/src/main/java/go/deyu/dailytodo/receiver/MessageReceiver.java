@@ -45,7 +45,7 @@ public class MessageReceiver extends BroadcastReceiver {
             model.checkChangeDay();
             List<NotificationMessage> mNotfinishMessages =  model.getNotFinishMessage();
             model.notiMessages(mNotfinishMessages);
-            model.speakMessages(mNotfinishMessages);
+            model.speakDefaultMessage(mNotfinishMessages);
         }
 
         if(intent.getAction().equals(ACTION_FINISH_MESSAGE)){

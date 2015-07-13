@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 
+import java.util.Locale;
+
 /**
  * Created by huangeyu on 15/6/24.
  */
@@ -30,7 +32,7 @@ public class AndroidTTS implements TTStoSpeak , TextToSpeech.OnInitListener {
     @Override
     public void onInit(int status) {
         this.status = status;
-        TTS.setLanguage(mContext.getResources().getConfiguration().locale);
+        TTS.setLanguage(Locale.ENGLISH);
     }
 
     public void speak(String message){
@@ -66,6 +68,7 @@ public class AndroidTTS implements TTStoSpeak , TextToSpeech.OnInitListener {
 //    TODO unbind TTS
     @Override
     public void close() {
-
+        TTS.stop();
+        TTS.shutdown();
     }
 }

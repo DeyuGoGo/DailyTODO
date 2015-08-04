@@ -30,5 +30,13 @@
         android:text="Finish?"
         android:focusable="false"
         android:layout_gravity="right"/>
+
+    <TextView
+        android:id="@+id/tv_main_body_time_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:layout_gravity="left|bottom" />
 </FrameLayout>
 </com.daimajia.swipe.SwipeLayout>

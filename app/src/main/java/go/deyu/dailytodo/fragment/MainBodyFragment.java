@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.UiThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,11 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
                 LOG.d(TAG, "changeMessageState position : " + position + " state : " + state);
                 model.changeMessageState((int)adapter.getItemId(position) , state);
             }
+            @Override
+            public void OnTimeSetChanged(int position, int hour, int min) {
+                LOG.d(TAG , "changeMessageState position " + position  + " hour : " + hour + " min : " + min);
+                model.changeMessageAlarmTime((int)adapter.getItemId(position) , hour , min);
+            }
         };
     }
 
@@ -109,6 +115,7 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
         mUIHandler.sendEmptyMessage(WHAT_MESSAGE_CHANGE);
     }
 
+    @UiThread
     private void refreshMessage(){
         try {
             model.refreshMessage();

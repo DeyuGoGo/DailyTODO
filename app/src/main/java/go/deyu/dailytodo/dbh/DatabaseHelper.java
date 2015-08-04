@@ -18,7 +18,7 @@ import go.deyu.dailytodo.data.NotificationMessage;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "message.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private final String LOG_NAME = getClass().getName();
 
     private Dao<NotificationMessage, Integer> thingDao;

@@ -1,8 +1,9 @@
 package go.deyu.dailytodo.app;
 
 import android.app.Application;
+import android.content.Intent;
 
-import go.deyu.dailytodo.receiver.MessageReceiver;
+import go.deyu.dailytodo.ReceiverService;
 import go.deyu.util.AppContextSingleton;
 import go.deyu.util.LOG;
 
@@ -11,17 +12,17 @@ import go.deyu.util.LOG;
  */
 public class App extends Application {
 
-    private MessageReceiver receiver ;
     private final String TAG =getClass().getSimpleName();
 
+//    in app create init some util tool and register MessageReceiver
     @Override
     public void onCreate() {
         super.onCreate();
         LOG.LOGTAG = getString(getApplicationInfo().labelRes);
         LOG.d(TAG , "onCreate");
         AppContextSingleton.initialize(this);
-        receiver = new MessageReceiver();
-        registerReceiver(receiver , receiver.getIntentFilter());
+        startService(new Intent(this, ReceiverService.class));
     }
+
 
 }

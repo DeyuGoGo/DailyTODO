@@ -19,6 +19,7 @@ public class MainActivity extends FragmentActivity {
     private MessageModel messageModel;
     private final String TAG = getClass().getSimpleName();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +56,11 @@ public class MainActivity extends FragmentActivity {
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_head_container, HeadFragment)
-                    .add(R.id.fragment_body_container, BodyFragment)
+                    .add(R.id.fragment_body_container, BodyFragment , "BodyFragment")
                     .commit();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

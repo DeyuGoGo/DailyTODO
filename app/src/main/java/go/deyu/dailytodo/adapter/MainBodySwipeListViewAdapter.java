@@ -1,7 +1,12 @@
 package go.deyu.dailytodo.adapter;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +14,17 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.data.NotificationMessage;
-import go.deyu.util.LOG;
+import go.deyu.dailytodo.fragment.TimePickerFragment;
 
 /**
  * Created by huangeyu on 15/5/19.
@@ -65,13 +72,13 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
     public View generateView(final int position, ViewGroup viewGroup) {
         View v = mLayoutInflater.inflate(R.layout.main_body_swipe_list_item, null);
         Button deleteBtn =(Button)(v.findViewById(R.id.delete));
+        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 OnItemDelete(position);
             }
         });
-        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
         NotificationMessage nm = mMessages.get(position);
         finish_cb.setChecked(nm.getState() == NotificationMessage.STATE_FINISH);
         finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -81,15 +88,24 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
                 OnItemStateChanged(position , state);
             }
         });
+        TextView time_TV = (TextView)v.findViewById(R.id.tv_main_body_time_picker);
+        time_TV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(position);
+            }
+        });
         return v;
     }
 
     @Override
     public void fillValues(int position, View convertView) {
         TextView message_Tv = (TextView) convertView.findViewById(R.id.tv_main_body_list_item);
+        TextView time_TV = (TextView)convertView.findViewById(R.id.tv_main_body_time_picker);
+
         final NotificationMessage nm = mMessages.get(position);
         message_Tv.setText(nm.getMessage());
-        LOG.d("fillValues", "message : " + nm.getMessage() + " state : " + nm.getState());
+        time_TV.setText("每日開始提醒時間 " + nm.getHour() + ":" + nm.getMin());
         SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.swipe);
         swipeLayout.close();
     }
@@ -98,6 +114,16 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
     public int getSwipeLayoutResourceId(int i) {
         return R.id.swipe;
     }
+
+    private void showTimePickerDialog(final int position) {
+        DialogFragment newFragment = new TimePickerFragment();
+        Bundle b = new Bundle();
+        b.putSerializable(TimePickerFragment.KEY_ARGUMENTS_LISTENER, new OnTimeSetListenerSeri(position));
+        newFragment.setArguments(b);
+        FragmentActivity a = (FragmentActivity)mContext;
+        newFragment.show(a.getSupportFragmentManager(), "timePicker");
+    }
+
 
 
     public void OnItemDelete(int position){
@@ -114,8 +140,29 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         }
     }
 
+//    Time picker change call listener
+    public void OnTimeSetChanged(@NonNull int position , @NonNull int hour ,@NonNull int min){
+        for(SwipeLayoutListener l : mListeners){
+            if(l==null)continue;
+            l.OnTimeSetChanged(position, hour, min);
+        }
+    }
+
     public interface SwipeLayoutListener{
         public void OnDeleteClick(int position);
         public void OnStateChanged(int position , int state);
+        public void OnTimeSetChanged(int position , int hour , int min);
+    }
+
+    class OnTimeSetListenerSeri implements TimePickerDialog.OnTimeSetListener , Serializable{
+        private int position;
+        public OnTimeSetListenerSeri (int position){
+            this.position = position;
+        }
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+            OnTimeSetChanged(position , hourOfDay , minute);
+        }
     }
 }

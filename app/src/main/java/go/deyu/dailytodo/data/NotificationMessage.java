@@ -15,6 +15,12 @@ public class NotificationMessage {
     @DatabaseField
     private String message ;
 
+    @DatabaseField(defaultValue = "0")
+    private Integer hour ;
+
+    @DatabaseField(defaultValue = "0")
+    private Integer min ;
+
 //    0 = finish
 //    1 = not finish
     public static final int STATE_FINISH = 0;
@@ -53,6 +59,22 @@ public class NotificationMessage {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public Integer getHour() {
+        return hour;
+    }
+
+    public void setHour(Integer hour) {
+        this.hour = hour;
+    }
+
+    public Integer getMin() {
+        return min;
+    }
+
+    public void setMin(Integer min) {
+        this.min = min;
     }
 
     @Override

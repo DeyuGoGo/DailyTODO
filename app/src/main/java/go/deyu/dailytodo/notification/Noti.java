@@ -2,6 +2,7 @@ package go.deyu.dailytodo.notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
@@ -19,6 +20,7 @@ public class Noti {
                 .setContentTitle("Daliy TODO")
                 .setContentText(Message)
                 .setSmallIcon(R.drawable.ic_launcher)
+                .setContentIntent(PendingIntent.getActivity( context ,id , getLauncherIntent(context) , PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
         // hide the notification after its selected
@@ -30,5 +32,8 @@ public class Noti {
     private Intent getCancelIntent(){
         Intent p = new Intent();
         return p;
+    }
+    private static Intent getLauncherIntent(Context context){
+        return context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
     }
 }

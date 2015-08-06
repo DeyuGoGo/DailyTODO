@@ -70,42 +70,19 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
 
     @Override
     public View generateView(final int position, ViewGroup viewGroup) {
+
         View v = mLayoutInflater.inflate(R.layout.main_body_swipe_list_item, null);
-        Button deleteBtn =(Button)(v.findViewById(R.id.delete));
         CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OnItemDelete(position);
-            }
-        });
         NotificationMessage nm = mMessages.get(position);
         finish_cb.setChecked(nm.getState() == NotificationMessage.STATE_FINISH);
-        finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int state = isChecked ? NotificationMessage.STATE_FINISH : NotificationMessage.STATE_NOT_FINISH;
-                OnItemStateChanged(position , state);
-            }
-        });
-        TextView time_TV = (TextView)v.findViewById(R.id.tv_main_body_time_picker);
-        time_TV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTimePickerDialog(position);
-            }
-        });
         return v;
     }
 
     @Override
     public void fillValues(int position, View convertView) {
-        TextView message_Tv = (TextView) convertView.findViewById(R.id.tv_main_body_list_item);
-        TextView time_TV = (TextView)convertView.findViewById(R.id.tv_main_body_time_picker);
-
-        final NotificationMessage nm = mMessages.get(position);
-        message_Tv.setText(nm.getMessage());
-        time_TV.setText("每日開始提醒時間 " + nm.getHour() + ":" + nm.getMin());
+        NotificationMessage nm = mMessages.get(position);
+        setViewValue(convertView , position , nm);
+        setViewListener(convertView , position , nm);
         SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.swipe);
         swipeLayout.close();
     }
@@ -124,7 +101,37 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         newFragment.show(a.getSupportFragmentManager(), "timePicker");
     }
 
+    private void setViewValue(View v , int position , NotificationMessage nm ){
+        TextView message_Tv = (TextView) v.findViewById(R.id.tv_main_body_list_item);
+        TextView time_TV = (TextView)v.findViewById(R.id.tv_main_body_time_picker);
+        message_Tv.setText(nm.getMessage());
+        time_TV.setText("每日開始提醒時間 " + nm.getHour() + ":" + nm.getMin());
+    }
 
+    private void setViewListener(View v ,final int position , NotificationMessage nm ){
+        Button deleteBtn =(Button)(v.findViewById(R.id.delete));
+        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnItemDelete(position);
+            }
+        });
+        finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int state = isChecked ? NotificationMessage.STATE_FINISH : NotificationMessage.STATE_NOT_FINISH;
+                OnItemStateChanged(position, state);
+            }
+        });
+        TextView time_TV = (TextView)v.findViewById(R.id.tv_main_body_time_picker);
+        time_TV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(position);
+            }
+        });
+    }
 
     public void OnItemDelete(int position){
         for(SwipeLayoutListener l : mListeners){

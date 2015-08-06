@@ -73,7 +73,7 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
             }
             @Override
             public void OnTimeSetChanged(int position, int hour, int min) {
-                LOG.d(TAG , "changeMessageState position " + position  + " hour : " + hour + " min : " + min);
+                LOG.d(TAG , "changeMessageTime position " + position  + " hour : " + hour + " min : " + min);
                 model.changeMessageAlarmTime((int)adapter.getItemId(position) , hour , min);
             }
         };

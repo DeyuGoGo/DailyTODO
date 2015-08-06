@@ -28,7 +28,7 @@ public class Noti {
 
         notificationManager.notify(id, noti);
     }
-//    TODO not finish
+//    TODO to cancel Intent
     private Intent getCancelIntent(){
         Intent p = new Intent();
         return p;

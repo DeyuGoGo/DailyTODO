@@ -106,15 +106,14 @@ public class MessageModel implements MessageFacade
     }
     private void speakDefaultMessage(List<NotificationMessage> messages){
         if(messages!=null && messages.size()>0) {
-            MediaPlayer mp = MediaPlayer.create(mContext, R.raw.nottodo);
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                }
-            });
-            mp.start();
+                MediaPlayer mp = MediaPlayer.create(mContext, R.raw.nottodo);
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.release();
+                    }
+                });
+                mp.start();
         }
     }
 

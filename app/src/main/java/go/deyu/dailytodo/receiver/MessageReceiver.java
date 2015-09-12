@@ -8,7 +8,7 @@ import android.content.IntentFilter;
 import java.sql.SQLException;
 
 import go.deyu.dailytodo.data.NotificationMessage;
-import go.deyu.dailytodo.model.MessageFacade;
+import go.deyu.dailytodo.model.MessageModelInterface;
 import go.deyu.dailytodo.model.MessageModel;
 import go.deyu.dailytodo.notification.Noti;
 import go.deyu.util.LOG;
@@ -31,16 +31,16 @@ public class MessageReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        MessageFacade facade = null;
+        MessageModelInterface model = null;
         try {
-            facade = new MessageModel(context);
+            model = new MessageModel(context);
         } catch (SQLException e) {
             LOG.d(TAG , "onReceive init MessageModel error : " + e);
         }
-        if(facade==null)return;
+        if(model==null)return;
 
         if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
-            facade.doAlarm();
+            model.doAlarm();
         }
     }
 

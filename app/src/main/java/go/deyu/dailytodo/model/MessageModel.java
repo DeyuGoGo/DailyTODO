@@ -23,7 +23,7 @@ import go.deyu.util.LOG;
 /**
  * Created by huangeyu on 15/5/19.
  */
-public class MessageModel implements MessageFacade
+public class MessageModel implements MessageModelInterface
 {
 
     private DatabaseHelper dbh ;

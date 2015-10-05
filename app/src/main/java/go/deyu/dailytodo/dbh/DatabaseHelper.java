@@ -11,7 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-import go.deyu.dailytodo.data.NotificationMessage;
+import go.deyu.dailytodo.data.NotificationMessageORM;
 
 /**
  * Created by huangeyu on 15/5/20.
@@ -21,7 +21,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 3;
     private final String LOG_NAME = getClass().getName();
 
-    private Dao<NotificationMessage, Integer> thingDao;
+    private Dao<NotificationMessageORM, Integer> thingDao;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -30,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
         try {
-            TableUtils.createTable(connectionSource, NotificationMessage.class);
+            TableUtils.createTable(connectionSource, NotificationMessageORM.class);
         } catch (SQLException e) {
             Log.e(LOG_NAME, "Could not create new table for Thing", e);
         }
@@ -40,16 +40,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int oldVersion,
                           int newVersion) {
         try {
-            TableUtils.dropTable(connectionSource, NotificationMessage.class, true);
+            TableUtils.dropTable(connectionSource, NotificationMessageORM.class, true);
             onCreate(sqLiteDatabase, connectionSource);
         } catch (SQLException e) {
             Log.e(LOG_NAME, "Could not upgrade the table for Thing", e);
         }
     }
 
-    public Dao<NotificationMessage, Integer> getNotificationMessageDao() throws SQLException {
+    public Dao<NotificationMessageORM, Integer> getNotificationMessageDao() throws SQLException {
         if (thingDao == null) {
-            thingDao = getDao(NotificationMessage.class);
+            thingDao = getDao(NotificationMessageORM.class);
         }
         return thingDao;
     }

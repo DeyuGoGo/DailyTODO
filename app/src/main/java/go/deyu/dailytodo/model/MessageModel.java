@@ -13,7 +13,7 @@ import java.util.List;
 
 import go.deyu.dailytodo.DailyCheck;
 import go.deyu.dailytodo.R;
-import go.deyu.dailytodo.data.NotificationMessage;
+import go.deyu.dailytodo.data.NotificationMessageORM;
 import go.deyu.dailytodo.dbh.DatabaseHelper;
 import go.deyu.dailytodo.notification.Noti;
 import go.deyu.dailytodo.tts.AndroidTTS;
@@ -27,9 +27,9 @@ public class MessageModel implements MessageModelInterface
 {
 
     private DatabaseHelper dbh ;
-    private Dao<NotificationMessage, Integer> messageDao ;
+    private Dao<NotificationMessageORM, Integer> messageDao ;
     private Context mContext;
-    private ArrayList<NotificationMessage> mMessages ;
+    private ArrayList<NotificationMessageORM> mMessages ;
     private final String TAG = getClass().getSimpleName();
     private ArrayList<OnMessageChangeListener> listeners ;
     public static final String PREFS_NAME = "MessagePrefs";
@@ -42,13 +42,18 @@ public class MessageModel implements MessageModelInterface
         this.dbh = new DatabaseHelper(mContext);
         this.listeners = new ArrayList<OnMessageChangeListener>();
         this.messageDao = dbh.getNotificationMessageDao();
-        this.mMessages = new ArrayList<NotificationMessage>();
-        List<NotificationMessage> DBMessages =  getDBMessages();
+        this.mMessages = new ArrayList<NotificationMessageORM>();
+        List<NotificationMessageORM> DBMessages =  getDBMessages();
         if(DBMessages!=null) mMessages.addAll(DBMessages);
     }
 
-    public void refreshMessage() throws SQLException{
-        List<NotificationMessage> DBMessages = getDBMessages();
+    public void refreshMessage() {
+        List<NotificationMessageORM> DBMessages = null;
+        try {
+            DBMessages = getDBMessages();
+        } catch (SQLException e) {
+            LOG.d(TAG,"Exception : " + e);
+        }
         mMessages.clear();
         if(DBMessages!=null) mMessages.addAll(DBMessages);
     }
@@ -56,7 +61,7 @@ public class MessageModel implements MessageModelInterface
 
     public void addMessage(String message){
         try{
-            messageDao.create(new NotificationMessage(message));
+            messageDao.create(new NotificationMessageORM(message));
         } catch (SQLException e){
             LOG.d(TAG , "addMessage Exception : " + e);
         }
@@ -66,7 +71,7 @@ public class MessageModel implements MessageModelInterface
     public void changeMessageState(int id , int state){
         try{
             LOG.d(TAG, "changeMessageState id " + id + " state : " + state);
-            NotificationMessage n = messageDao.queryForId(id);
+            NotificationMessageORM n = messageDao.queryForId(id);
             n.setState(state);
             messageDao.update(n);
         } catch (SQLException e){
@@ -77,7 +82,7 @@ public class MessageModel implements MessageModelInterface
     public void changeMessageAlarmTime(int id , int hour, int min){
         LOG.d(TAG , "changeMessageState id " + id  + " hour : " + hour + " min : " + min);
         try{
-            NotificationMessage n = messageDao.queryForId(id);
+            NotificationMessageORM n = messageDao.queryForId(id);
             n.setHour(hour);
             n.setMin(min);
             messageDao.update(n);
@@ -90,8 +95,8 @@ public class MessageModel implements MessageModelInterface
     private void updateDaily(){
         try {
             LOG.d(TAG, "updateDaily");
-            UpdateBuilder<NotificationMessage, Integer> builder = messageDao.updateBuilder();
-            builder.updateColumnValue("state", new Integer(NotificationMessage.STATE_NOT_FINISH));
+            UpdateBuilder<NotificationMessageORM, Integer> builder = messageDao.updateBuilder();
+            builder.updateColumnValue("state", new Integer(NotificationMessageORM.STATE_NOT_FINISH));
             builder.update();
         } catch (SQLException e) {
             LOG.e(TAG , "updateDaily fail : " + e);
@@ -99,12 +104,12 @@ public class MessageModel implements MessageModelInterface
         }
     }
 
-    public void speakMessages(List<NotificationMessage> messages){
+    public void speakMessages(List<NotificationMessageORM> messages){
         TTStoSpeak TTS = new AndroidTTS(mContext);
-        for(NotificationMessage m : messages)
+        for(NotificationMessageORM m : messages)
             TTS.speak(m.getMessage());
     }
-    private void speakDefaultMessage(List<NotificationMessage> messages){
+    private void speakDefaultMessage(List<NotificationMessageORM> messages){
         if(messages!=null && messages.size()>0) {
                 MediaPlayer mp = MediaPlayer.create(mContext, R.raw.nottodo);
                 mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -117,22 +122,22 @@ public class MessageModel implements MessageModelInterface
         }
     }
 
-    private void notiMessages(List<NotificationMessage> messages){
-        for(NotificationMessage m : messages)
+    private void notiMessages(List<NotificationMessageORM> messages){
+        for(NotificationMessageORM m : messages)
             notiMessage(m);
     }
 
-    private void notiMessage(NotificationMessage m ){
+    private void notiMessage(NotificationMessageORM m ){
         Noti.showNotification(m.getMessage(), m.getId());
     }
 
-    private List<NotificationMessage> getNeedAlarmMessage(){
-        List<NotificationMessage> messages = getNotFinishMessage();
+    private List<NotificationMessageORM> getNeedAlarmMessage(){
+        List<NotificationMessageORM> messages = getNotFinishMessage();
         Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int min = c.get(Calendar.MINUTE);
         int nowTime = hour*100 + min ;
-        for (NotificationMessage m : mMessages) {
+        for (NotificationMessageORM m : mMessages) {
             int messagealarmtime = m.getHour()*100 + m.getMin();
             LOG.d(TAG,"messagealarmtime : " + messagealarmtime +  " \n");
             LOG.d(TAG,"nowTime : " + nowTime +  " \n");
@@ -142,10 +147,10 @@ public class MessageModel implements MessageModelInterface
         return messages;
     }
 
-    private List<NotificationMessage> getNotFinishMessage() {
-        List<NotificationMessage> messages = new ArrayList<NotificationMessage>();
-        for (NotificationMessage m : mMessages) {
-            if(m.getState()==NotificationMessage.STATE_NOT_FINISH){
+    private List<NotificationMessageORM> getNotFinishMessage() {
+        List<NotificationMessageORM> messages = new ArrayList<NotificationMessageORM>();
+        for (NotificationMessageORM m : mMessages) {
+            if(m.getState()== NotificationMessageORM.STATE_NOT_FINISH){
                 messages.add(m);
             }
         }
@@ -160,7 +165,7 @@ public class MessageModel implements MessageModelInterface
         onChange();
     }
 
-    public ArrayList<NotificationMessage> getMessages(){
+    public List<NotificationMessageORM> getMessages(){
         return mMessages;
     }
 
@@ -178,7 +183,7 @@ public class MessageModel implements MessageModelInterface
         }
     }
 
-    public List<NotificationMessage> getDBMessages() throws SQLException{
+    public List<NotificationMessageORM> getDBMessages() throws SQLException{
         return messageDao.queryForAll();
     }
 
@@ -193,12 +198,10 @@ public class MessageModel implements MessageModelInterface
     @Override
     public void doAlarm() {
         checkChangeDay();
-        List<NotificationMessage> mNotfinishMessages =  getNeedAlarmMessage();
+        List<NotificationMessageORM> mNotfinishMessages =  getNeedAlarmMessage();
         notiMessages(mNotfinishMessages);
         speakDefaultMessage(mNotfinishMessages);
     }
 
-    public interface OnMessageChangeListener{
-        public void onChange();
-    }
+
 }

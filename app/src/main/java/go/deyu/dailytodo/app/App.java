@@ -23,6 +23,4 @@ public class App extends Application {
         AppContextSingleton.initialize(this);
         startService(new Intent(this, ReceiverService.class));
     }
-
-
 }

@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import go.deyu.dailytodo.receiver.MessageReceiver;
+import go.deyu.util.LOG;
 
 public class ReceiverService extends Service {
 
     private MessageReceiver receiver ;
+
+    private final String TAG = getClass().getSimpleName();
 
 
     public ReceiverService() {
@@ -20,6 +23,7 @@ public class ReceiverService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        LOG.d(TAG, "onCreate");
         receiver = new MessageReceiver();
         registerReceiver(receiver, receiver.getIntentFilter());
     }
@@ -32,6 +36,7 @@ public class ReceiverService extends Service {
      */
     @Override
     public void onDestroy() {
+        LOG.d(TAG,"onDestroy");
         super.onDestroy();
         if(receiver!=null)unregisterReceiver(receiver);
     }

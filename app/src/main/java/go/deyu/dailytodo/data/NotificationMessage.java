@@ -1,84 +1,26 @@
 package go.deyu.dailytodo.data;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 /**
- * Created by huangeyu on 15/5/19.
+ * Created by huangeyu on 15/10/5.
  */
-@DatabaseTable
-public class NotificationMessage {
+public interface NotificationMessage {
+    public String getMessage();
 
-    @DatabaseField(generatedId = true)
-    private Integer id ;
+    public void setMessage(String message);
 
-    @DatabaseField
-    private String message ;
+    public int getId();
 
-    @DatabaseField(defaultValue = "0")
-    private Integer hour ;
+    public void setId(int id);
 
-    @DatabaseField(defaultValue = "0")
-    private Integer min ;
+    public int getState();
 
-//    0 = finish
-//    1 = not finish
-    public static final int STATE_FINISH = 0;
-    public static final int STATE_NOT_FINISH = 1;
+    public void setState(int state);
 
-    @DatabaseField
-    private Integer state ;
+    public int getHour();
 
-    public NotificationMessage(){
-    }
+    public void setHour(int hour);
 
-    public NotificationMessage(String message){
-        this.message = message;
-        this.state = STATE_NOT_FINISH;
-    }
+    public int getMin() ;
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getState() {
-        return state;
-    }
-
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    public Integer getHour() {
-        return hour;
-    }
-
-    public void setHour(Integer hour) {
-        this.hour = hour;
-    }
-
-    public Integer getMin() {
-        return min;
-    }
-
-    public void setMin(Integer min) {
-        this.min = min;
-    }
-
-    @Override
-    public String toString() {
-        return "this is id : " + id +" , message : " + message + " , state : " + state;
-    }
+    public void setMin(int min);
 }

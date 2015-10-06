@@ -5,8 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import go.deyu.dailytodo.model.MessageModelInterface;
-import go.deyu.dailytodo.model.MessageModelRM;
+import go.deyu.dailytodo.AlarmMessageService;
 import go.deyu.util.LOG;
 
 public class MessageReceiver extends BroadcastReceiver {
@@ -26,10 +25,10 @@ public class MessageReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         LOG.d(TAG,"onReceive : " + intent.getAction());
-        MessageModelInterface model = null;
-        model = new MessageModelRM(context.getApplicationContext());
         if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
-            model.doAlarm();
+            Intent i = new Intent(context , AlarmMessageService.class);
+            i.setAction(AlarmMessageService.ACTION_START_ALARM);
+            context.startService(i);
         }
     }
 

@@ -3,7 +3,7 @@ package go.deyu.dailytodo.app;
 import android.app.Application;
 import android.content.Intent;
 
-import go.deyu.dailytodo.ReceiverService;
+import go.deyu.dailytodo.AlarmMessageService;
 import go.deyu.util.AppContextSingleton;
 import go.deyu.util.LOG;
 
@@ -21,6 +21,6 @@ public class App extends Application {
         LOG.LOGTAG = getString(getApplicationInfo().labelRes);
         LOG.d(TAG , "onCreate");
         AppContextSingleton.initialize(this);
-        startService(new Intent(this, ReceiverService.class));
+        startService(new Intent(this, AlarmMessageService.class));
     }
 }

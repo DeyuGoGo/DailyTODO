@@ -1,23 +1,17 @@
 package go.deyu.dailytodo.model;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.UpdateBuilder;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import go.deyu.dailytodo.DailyCheck;
-import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.data.NotificationMessageORM;
 import go.deyu.dailytodo.dbh.DatabaseHelper;
-import go.deyu.dailytodo.notification.Noti;
-import go.deyu.dailytodo.tts.AndroidTTS;
-import go.deyu.dailytodo.tts.TTStoSpeak;
 import go.deyu.util.LOG;
 
 /**
@@ -63,7 +57,7 @@ public class MessageModel implements MessageModelInterface
         try{
             messageDao.create(new NotificationMessageORM(message));
         } catch (SQLException e){
-            LOG.d(TAG , "addMessage Exception : " + e);
+            LOG.d(TAG, "addMessage Exception : " + e);
         }
         onChange();
     }
@@ -75,7 +69,7 @@ public class MessageModel implements MessageModelInterface
             n.setState(state);
             messageDao.update(n);
         } catch (SQLException e){
-            LOG.d(TAG , "changeMessageState Exception : " + e);
+            LOG.d(TAG, "changeMessageState Exception : " + e);
         }
     }
 
@@ -102,49 +96,6 @@ public class MessageModel implements MessageModelInterface
             LOG.e(TAG , "updateDaily fail : " + e);
             e.printStackTrace();
         }
-    }
-
-    public void speakMessages(List<NotificationMessageORM> messages){
-        TTStoSpeak TTS = new AndroidTTS(mContext);
-        for(NotificationMessageORM m : messages)
-            TTS.speak(m.getMessage());
-    }
-    private void speakDefaultMessage(List<NotificationMessageORM> messages){
-        if(messages!=null && messages.size()>0) {
-                MediaPlayer mp = MediaPlayer.create(mContext, R.raw.nottodo);
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.release();
-                    }
-                });
-                mp.start();
-        }
-    }
-
-    private void notiMessages(List<NotificationMessageORM> messages){
-        for(NotificationMessageORM m : messages)
-            notiMessage(m);
-    }
-
-    private void notiMessage(NotificationMessageORM m ){
-        Noti.showNotification(m.getMessage(), m.getId());
-    }
-
-    private List<NotificationMessageORM> getNeedAlarmMessage(){
-        List<NotificationMessageORM> messages = getNotFinishMessage();
-        Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int min = c.get(Calendar.MINUTE);
-        int nowTime = hour*100 + min ;
-        for (NotificationMessageORM m : mMessages) {
-            int messagealarmtime = m.getHour()*100 + m.getMin();
-            LOG.d(TAG,"messagealarmtime : " + messagealarmtime +  " \n");
-            LOG.d(TAG,"nowTime : " + nowTime +  " \n");
-            if(messagealarmtime>nowTime)
-                messages.remove(m);
-        }
-        return messages;
     }
 
     private List<NotificationMessageORM> getNotFinishMessage() {
@@ -187,21 +138,11 @@ public class MessageModel implements MessageModelInterface
         return messageDao.queryForAll();
     }
 
-
+    @Override
     public void checkChangeDay(){
         if(DailyCheck.isChangeDay()){
             updateDaily();
             DailyCheck.updateDayTime();
         }
     }
-
-    @Override
-    public void doAlarm() {
-        checkChangeDay();
-        List<NotificationMessageORM> mNotfinishMessages =  getNeedAlarmMessage();
-        notiMessages(mNotfinishMessages);
-        speakDefaultMessage(mNotfinishMessages);
-    }
-
-
 }

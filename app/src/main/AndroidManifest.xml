@@ -34,7 +34,7 @@
         </receiver>
 
         <service
-            android:name=".ReceiverService"
+            android:name=".AlarmMessageService"
             android:enabled="true"
             android:exported="true" >
         </service>

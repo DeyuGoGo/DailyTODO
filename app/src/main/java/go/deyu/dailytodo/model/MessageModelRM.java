@@ -49,6 +49,7 @@ public class MessageModelRM implements MessageModelInterface
                                      public void execute(Realm realm) {
                                          NotificationMessageRM ew = realm.createObject(NotificationMessageRM.class);
                                          ew.setMessage(message);
+                                         ew.setId(getIncrementID());
                                      }
                                  }
         );
@@ -127,6 +128,17 @@ public class MessageModelRM implements MessageModelInterface
             DailyCheck.updateDayTime();
         }
     }
+
+//    拿目前列表中最大的ID+1去當作新資料的ID。
+    private int getIncrementID(){
+        int i = 0 ;
+        if(mMessages!=null && mMessages.size()>0){
+            for(NotificationMessageRM data: mMessages)
+                if(data.getId()>i)i=data.getId();
+        }
+        return ++i;
+    }
+
     public void onChange(){
         for(OnMessageChangeListener l : listeners){
             if(l!=null)l.onChange();

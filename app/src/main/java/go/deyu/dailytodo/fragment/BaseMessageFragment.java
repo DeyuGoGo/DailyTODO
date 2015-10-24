@@ -12,7 +12,7 @@ import go.deyu.dailytodo.model.MessageModelInterface;
 /**
  * Created by huangeyu on 15/5/20.
  */
-public class BaseMessageFragment extends Fragment {
+public abstract class BaseMessageFragment extends Fragment {
     protected MessageModelInterface<NotificationMessageRM> model ;
 
     @Override

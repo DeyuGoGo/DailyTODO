@@ -6,13 +6,14 @@ import android.view.View;
 
 import butterknife.ButterKnife;
 import go.deyu.dailytodo.MainActivity;
-import go.deyu.dailytodo.model.MessageModel;
+import go.deyu.dailytodo.data.NotificationMessageRM;
+import go.deyu.dailytodo.model.MessageModelInterface;
 
 /**
  * Created by huangeyu on 15/5/20.
  */
-public class BaseMessageFragment extends Fragment {
-    protected MessageModel model ;
+public abstract class BaseMessageFragment extends Fragment {
+    protected MessageModelInterface<NotificationMessageRM> model ;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

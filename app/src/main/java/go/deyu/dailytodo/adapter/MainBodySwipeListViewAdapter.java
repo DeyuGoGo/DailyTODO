@@ -21,9 +21,10 @@ import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import go.deyu.dailytodo.R;
-import go.deyu.dailytodo.data.NotificationMessage;
+import go.deyu.dailytodo.data.NotificationMessageRM;
 import go.deyu.dailytodo.fragment.TimePickerFragment;
 
 /**
@@ -33,10 +34,10 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
 
     private Context mContext ;
     private LayoutInflater mLayoutInflater;
-    private ArrayList<NotificationMessage> mMessages ;
+    private List<NotificationMessageRM> mMessages ;
     private ArrayList<SwipeLayoutListener> mListeners ;
 
-    public MainBodySwipeListViewAdapter(Activity activity, ArrayList<NotificationMessage> messages){
+    public MainBodySwipeListViewAdapter(Activity activity, List<NotificationMessageRM> messages){
         this.mContext = activity;
         this.mLayoutInflater = activity.getLayoutInflater();
         this.mMessages = messages;
@@ -73,14 +74,14 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
 
         View v = mLayoutInflater.inflate(R.layout.main_body_swipe_list_item, null);
         CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
-        NotificationMessage nm = mMessages.get(position);
-        finish_cb.setChecked(nm.getState() == NotificationMessage.STATE_FINISH);
+        NotificationMessageRM nm = mMessages.get(position);
+        finish_cb.setChecked(nm.getState() == NotificationMessageRM.STATE_FINISH);
         return v;
     }
 
     @Override
     public void fillValues(int position, View convertView) {
-        NotificationMessage nm = mMessages.get(position);
+        NotificationMessageRM nm = mMessages.get(position);
         setViewValue(convertView , position , nm);
         setViewListener(convertView , position , nm);
         SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.swipe);
@@ -101,14 +102,14 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         newFragment.show(a.getSupportFragmentManager(), "timePicker");
     }
 
-    private void setViewValue(View v , int position , NotificationMessage nm ){
+    private void setViewValue(View v , int position , NotificationMessageRM nm ){
         TextView message_Tv = (TextView) v.findViewById(R.id.tv_main_body_list_item);
         TextView time_TV = (TextView)v.findViewById(R.id.tv_main_body_time_picker);
         message_Tv.setText(nm.getMessage());
         time_TV.setText("每日開始提醒時間 " + nm.getHour() + ":" + nm.getMin());
     }
 
-    private void setViewListener(View v ,final int position , NotificationMessage nm ){
+    private void setViewListener(View v ,final int position , NotificationMessageRM nm ){
         Button deleteBtn =(Button)(v.findViewById(R.id.delete));
         CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +121,7 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int state = isChecked ? NotificationMessage.STATE_FINISH : NotificationMessage.STATE_NOT_FINISH;
+                int state = isChecked ? NotificationMessageRM.STATE_FINISH : NotificationMessageRM.STATE_NOT_FINISH;
                 OnItemStateChanged(position, state);
             }
         });

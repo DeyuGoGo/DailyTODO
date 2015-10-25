@@ -6,17 +6,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.sql.SQLException;
-
+import go.deyu.dailytodo.data.NotificationMessageRM;
 import go.deyu.dailytodo.fragment.MainBodyFragment;
 import go.deyu.dailytodo.fragment.MainHeadFragment;
-import go.deyu.dailytodo.model.MessageModel;
+import go.deyu.dailytodo.model.MessageModelInterface;
+import go.deyu.dailytodo.model.MessageModelRM;
 import go.deyu.util.LOG;
 
 
 public class MainActivity extends FragmentActivity {
 
-    private MessageModel messageModel;
+    private MessageModelInterface<NotificationMessageRM> messageModel;
     private final String TAG = getClass().getSimpleName();
 
 
@@ -25,8 +25,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         try{
-            messageModel = new MessageModel(this);
-        } catch (SQLException e){
+            messageModel = new MessageModelRM(this);
+        } catch (Exception e){
             LOG.d(TAG , "new model fail : " + e);
         }
         if(messageModel==null){
@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    public MessageModel getMessageModel(){
+    public MessageModelInterface<NotificationMessageRM> getMessageModel(){
         return messageModel;
     }
 }

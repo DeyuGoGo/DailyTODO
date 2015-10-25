@@ -19,7 +19,7 @@ public class Noti {
         Notification noti = new Notification.Builder(context)
                 .setContentTitle("Daliy TODO")
                 .setContentText(Message)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.abc_ic_menu_share_mtrl_alpha)
                 .setContentIntent(PendingIntent.getActivity( context ,id , getLauncherIntent(context) , PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
@@ -28,12 +28,13 @@ public class Noti {
 
         notificationManager.notify(id, noti);
     }
+
 //    TODO to cancel Intent
     private Intent getCancelIntent(){
         Intent p = new Intent();
         return p;
     }
-    private static Intent getLauncherIntent(Context context){
+    public static Intent getLauncherIntent(Context context){
         return context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
     }
 }

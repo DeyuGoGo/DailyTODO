@@ -13,20 +13,18 @@ import android.widget.Toast;
 
 import com.daimajia.swipe.util.Attributes;
 
-import java.sql.SQLException;
-
 import butterknife.InjectView;
 import butterknife.OnItemLongClick;
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.adapter.MainBodySwipeListViewAdapter;
-import go.deyu.dailytodo.data.NotificationMessage;
-import go.deyu.dailytodo.model.MessageModel;
+import go.deyu.dailytodo.data.NotificationMessageRM;
+import go.deyu.dailytodo.model.OnMessageChangeListener;
 import go.deyu.util.LOG;
 
 /**
  * Created by huangeyu on 15/5/18.
  */
-public class MainBodyFragment extends BaseMessageFragment implements MessageModel.OnMessageChangeListener {
+public class MainBodyFragment extends BaseMessageFragment implements OnMessageChangeListener {
 
     private final String TAG = getClass().getSimpleName();
     private final Handler mUIHandler;
@@ -93,7 +91,7 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
         adapter.setMode(Attributes.Mode.Single);
         adapter.registerSwipeLayoutListener(listener);
         model.registerListener(this);
-        for(NotificationMessage m : model.getMessages()){
+        for(NotificationMessageRM m : model.getMessages()){
             LOG.d(TAG,"message " + m);
         }
     }
@@ -117,12 +115,7 @@ public class MainBodyFragment extends BaseMessageFragment implements MessageMode
 
     @UiThread
     private void refreshMessage(){
-        try {
-            model.refreshMessage();
-        } catch (SQLException e) {
-            LOG.d(TAG , "refresh error : " + e );
-            mUIHandler.sendEmptyMessage(WHAT_MESSAGE_ERROR);
-        }
+        model.refreshMessage();
         adapter.notifyDataSetChanged();
     }
 

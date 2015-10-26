@@ -53,7 +53,7 @@ public class MainBodyFragment extends BaseMessageFragment implements OnMessageCh
                         refreshMessage();
                         break;
                     case WHAT_MESSAGE_ERROR:
-                        if(getActivity()!=null)Toast.makeText(getActivity() , "Oh~No~Some Error", Toast.LENGTH_SHORT).show();
+                        if(getActivity()!=null)Toast.makeText(getActivity() , "Error", Toast.LENGTH_SHORT).show();
                         break;
 
                 }

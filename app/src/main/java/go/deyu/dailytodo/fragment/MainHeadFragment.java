@@ -16,6 +16,7 @@ import go.deyu.dailytodo.R;
  */
 public class MainHeadFragment extends BaseMessageFragment {
 
+
     @OnClick(R.id.btn_add)
     void addMessage() {
         showAddDialog();

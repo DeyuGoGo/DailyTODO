@@ -12,12 +12,14 @@ import go.deyu.util.AppContextSingleton;
 /**
  * Created by huangeyu on 15/5/21.
  */
+
 public class Noti {
 
     public static void showNotification(String Message , int id){
         Context context = AppContextSingleton.getApplicationContext();
+        String title = context.getResources().getString(R.string.app_name);
         Notification noti = new Notification.Builder(context)
-                .setContentTitle("Daliy TODO")
+                .setContentTitle(title)
                 .setContentText(Message)
                 .setSmallIcon(R.drawable.abc_ic_menu_share_mtrl_alpha)
                 .setContentIntent(PendingIntent.getActivity( context ,id , getLauncherIntent(context) , PendingIntent.FLAG_UPDATE_CURRENT))

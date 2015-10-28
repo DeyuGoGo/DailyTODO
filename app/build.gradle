@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "go.deyu.dailytodo"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -18,17 +18,31 @@ android {
         }
     }
     packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
         exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+    lintOptions {
+        abortOnError false;
+        disable 'InvalidPackage'            //Some libraries have issues with this.
+        disable 'OldTargetApi'
+        //Lint gives this warning but SDK 20 would be Android L Beta.
+        disable 'IconDensities'             //For testing purpose. This is safe to remove.
+        disable 'IconMissingDensityFolder'  //For testing purpose. This is safe to remove.
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:design:23.0.1'
     compile 'go.deyu:util:1.1.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.j256.ormlite:ormlite-core:4.48'
-    compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
     compile 'io.realm:realm-android:0.82.1'
     compile 'com.daimajia.swipelayout:library:1.2.0@aar'
 }

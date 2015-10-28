@@ -8,7 +8,7 @@
             android:id="@+id/delete"
             android:textColor="#FFFFFF"
             android:fontFamily="sans-serif-light"
-            android:text="Delete"
+            android:text="@string/delete"
             android:gravity="center"
             android:background="#FFFF4444"
             android:textSize="12sp"
@@ -18,25 +18,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
+        android:id="@+id/tv_main_body_list_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/tv_main_body_list_item" />
-    <CheckBox
-        android:id="@+id/cb_finish"
+        android:singleLine="true"
+        android:layout_gravity="start|center_vertical"/>
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Finish?"
-        android:focusable="false"
-        android:layout_gravity="right"/>
+        android:orientation="horizontal"
+        android:layout_gravity="end|center_vertical">
+        <ImageButton
+            android:id="@+id/imgbtn_time"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/time"
+            android:layout_gravity="center_vertical"/>
 
-    <TextView
-        android:id="@+id/tv_main_body_time_picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:layout_gravity="left|bottom" />
+        <TextView
+            android:id="@+id/tv_main_body_time_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_gravity="center_vertical"/>
+
+        <CheckBox
+            android:id="@+id/cb_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/done"
+            android:focusable="false"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
 </FrameLayout>
 </com.daimajia.swipe.SwipeLayout>

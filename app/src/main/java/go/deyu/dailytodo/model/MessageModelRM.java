@@ -49,6 +49,7 @@ public class MessageModelRM implements MessageModelInterface
                                      public void execute(Realm realm) {
                                          NotificationMessageRM ew = realm.createObject(NotificationMessageRM.class);
                                          ew.setMessage(message);
+                                         ew.setState(NotificationMessageRM.STATE_NOT_FINISH);
                                          ew.setId(getIncrementID());
                                      }
                                  }
@@ -98,13 +99,24 @@ public class MessageModelRM implements MessageModelInterface
 
     @Override
     public void deleteMessage(int id){
-        realm.beginTransaction();
         RealmQuery<NotificationMessageRM> query = realm.where(NotificationMessageRM.class);
-        RealmResults<NotificationMessageRM> rs = query.equalTo("id", id).findAll();
-        rs.removeLast();
+        NotificationMessageRM rs = query.equalTo("id", id).findFirst();
+        realm.beginTransaction();
+        rs.removeFromRealm();
         realm.commitTransaction();
         onChange();
     }
+
+    @Override
+    public void changeMessage(int id, String message) {
+        RealmQuery<NotificationMessageRM> query = realm.where(NotificationMessageRM.class);
+        NotificationMessageRM rs = query.equalTo("id", id).findFirst();
+        realm.beginTransaction();
+        rs.setMessage(message);
+        realm.commitTransaction();
+        onChange();
+    }
+
 
     @Override
     public List<NotificationMessageRM> getMessages(){
@@ -138,6 +150,7 @@ public class MessageModelRM implements MessageModelInterface
         }
         return ++i;
     }
+
 
     public void onChange(){
         for(OnMessageChangeListener l : listeners){

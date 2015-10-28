@@ -20,7 +20,8 @@
             android:layout_marginStart="10dp"
             android:text="@string/app_name"
             android:id="@+id/tv_title"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:textColor="#ffffff" />
     </LinearLayout>
 
     <LinearLayout
@@ -32,13 +33,13 @@
             android:id="@+id/setting_imgbtn"
             android:layout_width="32dp" android:layout_height="32dp"
             android:layout_margin="@dimen/fab_margin"
-            android:background="@drawable/setting"
+            android:background="@drawable/setting_w"
             android:layout_gravity="center_vertical" />
         <ImageButton
             android:id="@+id/add_imgbtn"
             android:layout_width="32dp" android:layout_height="32dp"
             android:layout_margin="@dimen/fab_margin"
-            android:background="@drawable/add"
+            android:background="@drawable/add_w"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 

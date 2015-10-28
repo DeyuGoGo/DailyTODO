@@ -16,7 +16,8 @@
             android:layout_height="match_parent" />
 <FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
     <TextView
         android:id="@+id/tv_main_body_list_item"
         android:layout_width="wrap_content"

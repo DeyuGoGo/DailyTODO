@@ -20,14 +20,15 @@
             android:layout_marginStart="10dp"
             android:text="@string/setting"
             android:id="@+id/tv_title"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:textColor="#ffffff" />
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/back_imgbtn"
         android:layout_width="32dp" android:layout_height="32dp"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@drawable/back"
+        android:background="@drawable/back_w"
         android:layout_gravity="end|center_vertical" />
 
 </FrameLayout>

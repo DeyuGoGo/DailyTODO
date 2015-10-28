@@ -6,13 +6,12 @@
         android:id="@+id/fragment_head_container"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="#FFFF00">
+        android:background="#000000">
 
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/fragment_body_container"
-        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/fragment_head_container">

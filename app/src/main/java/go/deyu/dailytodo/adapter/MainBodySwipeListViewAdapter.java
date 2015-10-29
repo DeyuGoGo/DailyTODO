@@ -116,7 +116,9 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         }else{
             viewHolder.message_Tv.setText(nm.getMessage());
         }
-        viewHolder.time_TV.setText( nm.getHour() + ":" + nm.getMin());
+
+
+        viewHolder.time_TV.setText(String.format(getTwoDigals(nm.getHour())) + ":" + getTwoDigals(nm.getMin()));
         LOG.d(TAG,"setViewValue nm.getState : " + nm.getState());
         viewHolder.finish_cb.setOnCheckedChangeListener(null);
         viewHolder.finish_cb.setChecked(nm.getState()==NotificationMessageRM.STATE_FINISH ? true : false );
@@ -184,6 +186,11 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             OnTimeSetChanged(position , hourOfDay , minute);
         }
+    }
+
+    private String getTwoDigals(int i){
+        String format = "%1$02d"; // two digits
+        return String.format(format, i);
     }
 
 

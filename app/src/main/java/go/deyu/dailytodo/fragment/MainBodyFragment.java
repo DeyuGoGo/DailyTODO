@@ -1,5 +1,7 @@
 package go.deyu.dailytodo.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,15 +10,18 @@ import android.support.annotation.UiThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.daimajia.swipe.util.Attributes;
 
-import butterknife.InjectView;
+import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.OnItemLongClick;
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.adapter.MainBodySwipeListViewAdapter;
+import go.deyu.dailytodo.data.NotificationMessage;
 import go.deyu.dailytodo.data.NotificationMessageRM;
 import go.deyu.dailytodo.model.OnMessageChangeListener;
 import go.deyu.util.LOG;
@@ -33,12 +38,16 @@ public class MainBodyFragment extends BaseMessageFragment implements OnMessageCh
     private MainBodySwipeListViewAdapter adapter;
     private MainBodySwipeListViewAdapter.SwipeLayoutListener listener ;
 
-    @InjectView(R.id.fragment_main_body_listview)ListView bodyListView;
+    @BindString(R.string.input_message)String str_Input_Message;
+    @BindString(R.string.confirm)String str_Confirm;
+    @BindString(R.string.cancel)String str_Cancel;
+
+    @Bind(R.id.fragment_main_body_listview)ListView bodyListView;
 
     @OnItemLongClick(R.id.fragment_main_body_listview)
-    boolean deleteMessage(int position){
+    boolean changeMessage(int position){
         LOG.d(TAG, "deleteMessage position : " + position);
-        model.deleteMessage((int)adapter.getItemId(position));
+        showChangeDialog((NotificationMessage)adapter.getItem(position));
         return true;
     }
 
@@ -53,7 +62,7 @@ public class MainBodyFragment extends BaseMessageFragment implements OnMessageCh
                         refreshMessage();
                         break;
                     case WHAT_MESSAGE_ERROR:
-                        if(getActivity()!=null)Toast.makeText(getActivity() , "Oh~No~Some Error", Toast.LENGTH_SHORT).show();
+                        if(getActivity()!=null)Toast.makeText(getActivity() , "Error", Toast.LENGTH_SHORT).show();
                         break;
 
                 }
@@ -64,6 +73,7 @@ public class MainBodyFragment extends BaseMessageFragment implements OnMessageCh
             public void OnDeleteClick(int position) {
                 deleteMessage(position);
             }
+
             @Override
             public void OnStateChanged(int position, int state) {
                 LOG.d(TAG, "changeMessageState position : " + position + " state : " + state);
@@ -119,4 +129,21 @@ public class MainBodyFragment extends BaseMessageFragment implements OnMessageCh
         adapter.notifyDataSetChanged();
     }
 
+    private void deleteMessage(int position){
+        model.deleteMessage((int)adapter.getItemId(position));
+    }
+
+    private void showChangeDialog(final NotificationMessage message) {
+        final EditText et = new EditText(getActivity());
+        et.setText(message.getMessage());
+        new AlertDialog.Builder(getActivity()).setTitle(str_Input_Message).setIcon(
+                R.drawable.note).setView(
+                et).setPositiveButton(str_Confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                model.changeMessage(message.getId(), et.getText().toString());
+            }
+        })
+                .setNegativeButton(str_Cancel, null).show();
+    }
 }

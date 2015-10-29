@@ -116,6 +116,18 @@ public class MessageModel implements MessageModelInterface
         onChange();
     }
 
+    @Override
+    public void changeMessage(int id, String message) {
+        try{
+            NotificationMessageORM n = messageDao.queryForId(id);
+            n.setMessage(message);
+            messageDao.update(n);
+        } catch (SQLException e){
+            LOG.d(TAG, "changeMessage Exception : " + e);
+        }
+        onChange();
+    }
+
     public List<NotificationMessageORM> getMessages(){
         return mMessages;
     }

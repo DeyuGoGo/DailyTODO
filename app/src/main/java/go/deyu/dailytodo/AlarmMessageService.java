@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 
@@ -83,15 +85,18 @@ public class AlarmMessageService extends Service {
     public void doAlarm(List<NotificationMessage> messages) {
         List<NotificationMessage> mNotfinishMessages =  getNeedAlarmMessage(messages);
         notiMessages(mNotfinishMessages);
-        speakDefaultMessage(mNotfinishMessages);
+        if(SettingConfig.getIsVoiceOpen(this))speakDefaultMessage(mNotfinishMessages);
     }
 
     private void startForegroundNotification(){
+        String title = getResources().getString(R.string.app_name);
+        Bitmap BIcon = BitmapFactory.decodeResource(getResources(), R.drawable.dailytodoicon);
         int count = getNotFinishMessage(model.getMessages()).size();
         Notification notification = new Notification.Builder(this)
-                .setContentTitle("Daliy TODO")
-                .setContentText("今天還有" + count +"件事還沒做。")
-                .setSmallIcon(R.drawable.abc_ic_menu_share_mtrl_alpha)
+                .setContentTitle(title)
+                .setContentText(String.format(getString(R.string.todaynotfinish) , count))
+                .setLargeIcon(BIcon)
+                .setSmallIcon(R.drawable.wallclock)
                 .setContentIntent(PendingIntent.getActivity(this, NOTIFICATION_FOREGROUND_ID, Noti.getLauncherIntent(this), PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         startForeground(NOTIFICATION_FOREGROUND_ID, notification);

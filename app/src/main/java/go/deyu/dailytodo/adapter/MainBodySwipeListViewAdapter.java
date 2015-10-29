@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -23,19 +24,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.data.NotificationMessageRM;
 import go.deyu.dailytodo.fragment.TimePickerFragment;
+import go.deyu.util.LOG;
 
 /**
  * Created by huangeyu on 15/5/19.
  */
 public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
 
+    private final String TAG = getClass().getSimpleName() ;
     private Context mContext ;
     private LayoutInflater mLayoutInflater;
     private List<NotificationMessageRM> mMessages ;
     private ArrayList<SwipeLayoutListener> mListeners ;
+
 
     public MainBodySwipeListViewAdapter(Activity activity, List<NotificationMessageRM> messages){
         this.mContext = activity;
@@ -70,22 +76,22 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
     }
 
     @Override
-    public View generateView(final int position, ViewGroup viewGroup) {
-
-        View v = mLayoutInflater.inflate(R.layout.main_body_swipe_list_item, null);
-        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
-        NotificationMessageRM nm = mMessages.get(position);
-        finish_cb.setChecked(nm.getState() == NotificationMessageRM.STATE_FINISH);
-        return v;
+    public View generateView(int position, ViewGroup viewGroup) {
+        ViewHolder holder;
+        View view = mLayoutInflater.inflate(R.layout.main_body_swipe_list_item, viewGroup, false);
+        holder = new ViewHolder(view);
+        view.setTag(holder);
+        setViewListener(holder);
+        LOG.d(TAG, "position "+ position + " generateView " + "message id : " + ((NotificationMessageRM)getItem(position)).getId());
+        return view;
     }
 
     @Override
     public void fillValues(int position, View convertView) {
         NotificationMessageRM nm = mMessages.get(position);
-        setViewValue(convertView , position , nm);
-        setViewListener(convertView , position , nm);
-        SwipeLayout swipeLayout = (SwipeLayout)convertView.findViewById(R.id.swipe);
-        swipeLayout.close();
+        ViewHolder viewHolder = (ViewHolder)convertView.getTag();
+        setViewValue(viewHolder, position, nm);
+        viewHolder.swipeLayout.close();
     }
 
     @Override
@@ -102,36 +108,45 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         newFragment.show(a.getSupportFragmentManager(), "timePicker");
     }
 
-    private void setViewValue(View v , int position , NotificationMessageRM nm ){
-        TextView message_Tv = (TextView) v.findViewById(R.id.tv_main_body_list_item);
-        TextView time_TV = (TextView)v.findViewById(R.id.tv_main_body_time_picker);
-        message_Tv.setText(nm.getMessage());
-        time_TV.setText("每日開始提醒時間 " + nm.getHour() + ":" + nm.getMin());
-    }
+    private void setViewValue(ViewHolder viewHolder , int position , NotificationMessageRM nm ){
+        viewHolder.setPosition(position);
+//        in swipelayout ellipsize is not work ... so do it my self
+        if(nm.getMessage().length()>7){
+            viewHolder.message_Tv.setText(nm.getMessage().substring(0,6) + "...");
+        }else{
+            viewHolder.message_Tv.setText(nm.getMessage());
+        }
 
-    private void setViewListener(View v ,final int position , NotificationMessageRM nm ){
-        Button deleteBtn =(Button)(v.findViewById(R.id.delete));
-        CheckBox finish_cb = (CheckBox) v.findViewById(R.id.cb_finish);
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OnItemDelete(position);
-            }
-        });
-        finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        viewHolder.time_TV.setText(String.format(getTwoDigals(nm.getHour())) + ":" + getTwoDigals(nm.getMin()));
+        LOG.d(TAG,"setViewValue nm.getState : " + nm.getState());
+        viewHolder.finish_cb.setOnCheckedChangeListener(null);
+        viewHolder.finish_cb.setChecked(nm.getState()==NotificationMessageRM.STATE_FINISH ? true : false );
+        viewHolder.finish_cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 int state = isChecked ? NotificationMessageRM.STATE_FINISH : NotificationMessageRM.STATE_NOT_FINISH;
-                OnItemStateChanged(position, state);
+                OnItemStateChanged((int) buttonView.getTag(), state);
             }
         });
-        TextView time_TV = (TextView)v.findViewById(R.id.tv_main_body_time_picker);
-        time_TV.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void setViewListener(ViewHolder viewHolder){
+        viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showTimePickerDialog(position);
+                LOG.d(TAG, "position delete OnClick");
+                OnItemDelete((int) v.getTag());
             }
         });
+        View.OnClickListener ShowTimeDialogListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog((int)v.getTag());
+            }
+        };
+        viewHolder.TimeButton.setOnClickListener(ShowTimeDialogListener);
+        viewHolder.time_TV.setOnClickListener(ShowTimeDialogListener);
     }
 
     public void OnItemDelete(int position){
@@ -169,8 +184,31 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
         }
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
             OnTimeSetChanged(position , hourOfDay , minute);
+        }
+    }
+
+    private String getTwoDigals(int i){
+        String format = "%1$02d"; // two digits
+        return String.format(format, i);
+    }
+
+
+    static class ViewHolder {
+        @Bind(R.id.tv_main_body_list_item) TextView message_Tv;
+        @Bind(R.id.tv_main_body_time_picker) TextView time_TV;
+        @Bind(R.id.cb_finish)CheckBox finish_cb;
+        @Bind(R.id.delete) Button deleteBtn;
+        @Bind(R.id.swipe) SwipeLayout swipeLayout;
+        @Bind(R.id.imgbtn_time)ImageButton TimeButton;
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
+        public void setPosition(int position){
+            deleteBtn.setTag(position);
+            finish_cb.setTag(position);
+            TimeButton.setTag(position);
+            time_TV.setTag(position);
         }
     }
 }

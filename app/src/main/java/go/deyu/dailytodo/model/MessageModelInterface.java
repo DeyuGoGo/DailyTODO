@@ -9,6 +9,7 @@ public interface MessageModelInterface<T> {
     public void addMessage(String message);
     public void deleteMessage(int id);
     public void refreshMessage();
+    public void changeMessage(int id , String message);
     public void changeMessageState(int id , int state);
     public void changeMessageAlarmTime(int id , int hour, int min);
     public List<T> getMessages();

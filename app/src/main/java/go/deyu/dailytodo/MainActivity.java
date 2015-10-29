@@ -1,12 +1,18 @@
 package go.deyu.dailytodo;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import go.deyu.dailytodo.data.NotificationMessageRM;
+import go.deyu.dailytodo.fragment.HeadBodyFragmentReplaceable;
 import go.deyu.dailytodo.fragment.MainBodyFragment;
 import go.deyu.dailytodo.fragment.MainHeadFragment;
 import go.deyu.dailytodo.model.MessageModelInterface;
@@ -14,7 +20,7 @@ import go.deyu.dailytodo.model.MessageModelRM;
 import go.deyu.util.LOG;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements HeadBodyFragmentReplaceable {
 
     private MessageModelInterface<NotificationMessageRM> messageModel;
     private final String TAG = getClass().getSimpleName();
@@ -59,6 +65,7 @@ public class MainActivity extends FragmentActivity {
                     .add(R.id.fragment_body_container, BodyFragment , "BodyFragment")
                     .commit();
         }
+        showAd();
     }
 
 
@@ -81,7 +88,44 @@ public class MainActivity extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     public MessageModelInterface<NotificationMessageRM> getMessageModel(){
         return messageModel;
     }
+
+    /**
+     * do change HeadFragment
+     *
+     * @param headfragment fragment want to replace old fragment
+     */
+    public void changeHeadFragment(Fragment headfragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_head_container, headfragment);
+        transaction.commit();
+    }
+
+    /**
+     * do change BodyFragment
+     *
+     * @param bodyfragment fragment want to replace old fragment
+     */
+
+    public void changeBodyFragment(Fragment bodyfragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_body_container, bodyfragment);
+        transaction.commit();
+    }
+
+    private void showAd(){
+
+        String My_DeviceId = getResources().getString(R.string.my_device_id_md5);
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest request = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice(My_DeviceId)        // All emulators
+                .build();
+        if(!request.isTestDevice(this))
+            mAdView.loadAd(request);
+    }
+
 }

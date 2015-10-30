@@ -19,6 +19,7 @@ import com.daimajia.swipe.util.Attributes;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.OnItemLongClick;
+import go.deyu.dailytodo.AlarmMessageService;
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.adapter.MainBodySwipeListViewAdapter;
 import go.deyu.dailytodo.data.NotificationMessage;
@@ -77,12 +78,14 @@ public class MainBodyFragment extends BaseMessageFragment implements OnMessageCh
             @Override
             public void OnStateChanged(int position, int state) {
                 LOG.d(TAG, "changeMessageState position : " + position + " state : " + state);
-                model.changeMessageState((int)adapter.getItemId(position) , state);
+                model.changeMessageState((int) adapter.getItemId(position), state);
+                getActivity().startService(AlarmMessageService.getSettingChangeIntent(getActivity()));
             }
             @Override
             public void OnTimeSetChanged(int position, int hour, int min) {
                 LOG.d(TAG , "changeMessageTime position " + position  + " hour : " + hour + " min : " + min);
-                model.changeMessageAlarmTime((int)adapter.getItemId(position) , hour , min);
+                model.changeMessageAlarmTime((int) adapter.getItemId(position), hour, min);
+                getActivity().startService(AlarmMessageService.getSettingChangeIntent(getActivity()));
             }
         };
     }

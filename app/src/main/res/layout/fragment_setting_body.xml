@@ -17,4 +17,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"/>
     </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+        <TextView
+            android:text="@string/bell_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"/>
+        <Switch
+            android:id="@+id/switch_bell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"/>
+    </FrameLayout>
 </LinearLayout>

@@ -35,11 +35,6 @@ public class Noti {
         notificationManager.notify(id, noti);
     }
 
-//    TODO to cancel Intent
-    private Intent getCancelIntent(){
-        Intent p = new Intent();
-        return p;
-    }
     public static Intent getLauncherIntent(Context context){
         return context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
     }

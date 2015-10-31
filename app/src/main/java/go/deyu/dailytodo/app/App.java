@@ -20,6 +20,7 @@ public class App extends Application {
         super.onCreate();
         LOG.LOGTAG = getString(getApplicationInfo().labelRes);
         LOG.d(TAG , "onCreate");
+        LOG.DEBUG = false;
         AppContextSingleton.initialize(this);
         startService(new Intent(this, AlarmMessageService.class));
     }

@@ -7,6 +7,7 @@ import java.util.List;
  */
 public interface MessageModelInterface<T> {
     public void addMessage(String message);
+    public T findMessageById(int messageid);
     public void deleteMessage(int id);
     public void refreshMessage();
     public void changeMessage(int id , String message);

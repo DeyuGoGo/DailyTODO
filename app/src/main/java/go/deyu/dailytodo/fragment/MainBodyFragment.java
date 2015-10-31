@@ -72,6 +72,7 @@ public class MainBodyFragment extends BaseMessageFragment implements OnMessageCh
         listener = new MainBodySwipeListViewAdapter.SwipeLayoutListener() {
             @Override
             public void OnDeleteClick(int position) {
+                getActivity().startService(AlarmMessageService.getCancelAlarmIntent(getActivity() ,(NotificationMessage)adapter.getItem(position) ));
                 deleteMessage(position);
             }
 

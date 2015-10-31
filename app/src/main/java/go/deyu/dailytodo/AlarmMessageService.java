@@ -29,6 +29,8 @@ public class AlarmMessageService extends Service {
 
     public static final String ACTION_ALARM_BELL = "go.deyu.alarm_bell";
 
+    public static final String ACTION_CANCEL_ALARM_BELL = "go.deyu.cancel.alarm_bell";
+
     public static final String ACTION_SETTING_CHANGE = "go.deyu.setting.changing";
 
     private MessageReceiver receiver ;
@@ -82,9 +84,18 @@ public class AlarmMessageService extends Service {
                 mMediaPlayer.setLooping(true);
                 mMediaPlayer.start();
             }
-            showAlarmView(intent.getStringExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_KEY));
+            int messageid = intent.getIntExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_ID_KEY, -1);
+            String message = "Alarm";
+            if(messageid!=-1){
+                message = model.findMessageById(messageid).getMessage();
+            }
+            showAlarmView(message);
         }
-
+        if(intent.getAction().equals(ACTION_CANCEL_ALARM_BELL)){
+            int messageid = intent.getIntExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_ID_KEY, -1);
+            if(messageid!=-1)
+                mMessageAlarm.cancelDailyAlarm(messageid);
+        }
         if(intent.getAction().equals(ACTION_SETTING_CHANGE)){
             setupAlarm();
         }
@@ -116,7 +127,7 @@ public class AlarmMessageService extends Service {
 
     private void speakDefaultMessage(List<NotificationMessage> messages){
         if(messages!=null && messages.size()>0) {
-            MediaPlayer mp = MediaPlayer.create(this, R.raw.nottodo);
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.todo_voice);
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
@@ -129,7 +140,14 @@ public class AlarmMessageService extends Service {
 
     public static Intent getSettingChangeIntent(Context context){
         Intent i = new Intent(context, AlarmMessageService.class);
-        i.setAction(AlarmMessageService.ACTION_SETTING_CHANGE);
+        i.setAction(ACTION_SETTING_CHANGE);
+        return i;
+    }
+
+    public static Intent getCancelAlarmIntent(Context context , NotificationMessage m){
+        Intent i = new Intent(context, AlarmMessageService.class);
+        i.setAction(ACTION_CANCEL_ALARM_BELL);
+        i.putExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_ID_KEY , m.getId());
         return i;
     }
 
@@ -138,7 +156,7 @@ public class AlarmMessageService extends Service {
             if (SettingConfig.getIsBellOpen(this))
                 mMessageAlarm.setDailyAlarm(m);
             else
-                mMessageAlarm.cancelDailyAlarm(m);
+                mMessageAlarm.cancelDailyAlarm(m.getId());
         }
     }
     private void showAlarmView(String message){

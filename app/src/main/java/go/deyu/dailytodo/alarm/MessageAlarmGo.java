@@ -43,22 +43,22 @@ public class MessageAlarmGo implements MessageAlarm{
         cal.set(Calendar.HOUR_OF_DAY , message.getHour());
         cal.set(Calendar.MINUTE, message.getMin());
         cal.set(Calendar.SECOND , 0);
-        PendingIntent pi = getMessageIntent(message);
+        PendingIntent pi = getMessageIntent(message.getId());
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
 
     }
 
     @Override
-    public void cancelDailyAlarm(NotificationMessage message) {
+    public void cancelDailyAlarm(int messageid) {
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-        am.cancel(getMessageIntent(message));
+        am.cancel(getMessageIntent(messageid));
     }
 
-    private PendingIntent getMessageIntent(NotificationMessage message){
+    private PendingIntent getMessageIntent(int messageid){
         Intent intent = new Intent(mContext , AlarmMessageService.class);
         intent.setAction(AlarmMessageService.ACTION_ALARM_BELL);
-        intent.putExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_KEY , message.getMessage());
-        return PendingIntent.getService(mContext, message.getId(), intent, PendingIntent.FLAG_ONE_SHOT);
+        intent.putExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_ID_KEY , messageid);
+        return PendingIntent.getService(mContext, messageid , intent, PendingIntent.FLAG_ONE_SHOT);
     }
 }

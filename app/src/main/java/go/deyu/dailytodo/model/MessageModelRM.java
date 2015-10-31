@@ -88,7 +88,8 @@ public class MessageModelRM implements MessageModelInterface
         realm.commitTransaction();
     }
 
-    private NotificationMessageRM findMessageById(int id){
+    @Override
+    public NotificationMessageRM findMessageById(int id){
         NotificationMessageRM result =null ;
         for(NotificationMessageRM m : mMessages){
             if(m.getId() == id)

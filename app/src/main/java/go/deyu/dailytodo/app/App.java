@@ -22,6 +22,9 @@ public class App extends Application {
         LOG.d(TAG , "onCreate");
         LOG.DEBUG = false;
         AppContextSingleton.initialize(this);
-        startService(new Intent(this, AlarmMessageService.class));
+        Intent i = new Intent(this , AlarmMessageService.class);
+        i.setAction(AlarmMessageService.ACTION_START_ALARM);
+        startService(i);
     }
+
 }

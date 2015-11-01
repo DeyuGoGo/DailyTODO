@@ -98,6 +98,8 @@ public class MainActivity extends FragmentActivity implements HeadBodyFragmentRe
      *
      * @param headfragment fragment want to replace old fragment
      */
+
+    @Override
     public void changeHeadFragment(Fragment headfragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_head_container, headfragment);
@@ -110,6 +112,7 @@ public class MainActivity extends FragmentActivity implements HeadBodyFragmentRe
      * @param bodyfragment fragment want to replace old fragment
      */
 
+    @Override
     public void changeBodyFragment(Fragment bodyfragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_body_container, bodyfragment);

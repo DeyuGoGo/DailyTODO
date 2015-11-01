@@ -1,23 +1,25 @@
 package go.deyu.dailytodo;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
+import go.deyu.dailytodo.alarm.MessageAlarm;
+import go.deyu.dailytodo.alarm.MessageAlarmGo;
 import go.deyu.dailytodo.data.NotificationMessage;
-import go.deyu.dailytodo.data.NotificationMessageRM;
 import go.deyu.dailytodo.model.MessageModelInterface;
 import go.deyu.dailytodo.model.MessageModelRM;
-import go.deyu.dailytodo.notification.Noti;
+import go.deyu.dailytodo.notification.MessageNotificationController;
+import go.deyu.dailytodo.notification.MessageNotificationControllerGo;
 import go.deyu.dailytodo.receiver.MessageReceiver;
 import go.deyu.util.LOG;
 
@@ -25,13 +27,25 @@ public class AlarmMessageService extends Service {
 
     public static final String ACTION_START_ALARM = "go.deyu.start.alarm";
 
-    private final int NOTIFICATION_FOREGROUND_ID = 0x87;
+    public static final String ACTION_ALARM_BELL = "go.deyu.alarm_bell";
+
+    public static final String ACTION_CANCEL_ALARM_BELL = "go.deyu.cancel.alarm_bell";
+
+    public static final String ACTION_SETTING_CHANGE = "go.deyu.setting.changing";
 
     private MessageReceiver receiver ;
 
     private final String TAG = getClass().getSimpleName();
 
+    private final int NOTIFICATION_FOREGROUND_ID = 0x87;
+
+    private MessageNotificationController mMessageNotificationController;
+
     private MessageModelInterface<NotificationMessage> model ;
+
+    private MessageAlarm mMessageAlarm;
+
+    private MediaPlayer mMediaPlayer = null;
 
 
     public AlarmMessageService() {
@@ -44,17 +58,46 @@ public class AlarmMessageService extends Service {
         receiver = new MessageReceiver();
         registerReceiver(receiver, receiver.getIntentFilter());
         model = new MessageModelRM(this);
+        mMessageAlarm = new MessageAlarmGo(this);
+        mMessageNotificationController = new MessageNotificationControllerGo(this,model);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if(intent == null ) return START_STICKY;
+
         if(intent.getAction() == null) return START_STICKY;
 
         if(intent.getAction().equals(ACTION_START_ALARM)){
             model.checkChangeDay();
-            doAlarm(model.getMessages());
-            startForegroundNotification();
+            mMessageNotificationController.showOverTimeNotfinishMessage();
+            startForeground(NOTIFICATION_FOREGROUND_ID, mMessageNotificationController.getForegroundNotification(NOTIFICATION_FOREGROUND_ID));
+            if(SettingConfig.getIsVoiceOpen(this))speakDefaultMessage(mMessageNotificationController.getNeedAlarmMessages());
+            setupAlarm();
+        }
+
+        if(intent.getAction().equals(ACTION_ALARM_BELL)){
+            LOG.d(TAG, "鬧鐘響鈴");
+            if(mMediaPlayer == null){
+                mMediaPlayer = MediaPlayer.create(this, R.raw.alarmmusic);
+                mMediaPlayer.setLooping(true);
+                mMediaPlayer.start();
+            }
+            int messageid = intent.getIntExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_ID_KEY, -1);
+            String message = "Alarm";
+            if(messageid!=-1){
+                message = model.findMessageById(messageid).getMessage();
+            }
+            showAlarmView(message);
+        }
+        if(intent.getAction().equals(ACTION_CANCEL_ALARM_BELL)){
+            int messageid = intent.getIntExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_ID_KEY, -1);
+            if(messageid!=-1)
+                mMessageAlarm.cancelDailyAlarm(messageid);
+        }
+        if(intent.getAction().equals(ACTION_SETTING_CHANGE)){
+            setupAlarm();
         }
         return START_STICKY;
     }
@@ -82,66 +125,9 @@ public class AlarmMessageService extends Service {
     }
 
 
-    public void doAlarm(List<NotificationMessage> messages) {
-        List<NotificationMessage> mNotfinishMessages =  getNeedAlarmMessage(messages);
-        notiMessages(mNotfinishMessages);
-        if(SettingConfig.getIsVoiceOpen(this))speakDefaultMessage(mNotfinishMessages);
-    }
-
-    private void startForegroundNotification(){
-        String title = getResources().getString(R.string.app_name);
-        Bitmap BIcon = BitmapFactory.decodeResource(getResources(), R.drawable.dailytodoicon);
-        int count = getNotFinishMessage(model.getMessages()).size();
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(title)
-                .setContentText(String.format(getString(R.string.todaynotfinish) , count))
-                .setLargeIcon(BIcon)
-                .setSmallIcon(R.drawable.wallclock)
-                .setContentIntent(PendingIntent.getActivity(this, NOTIFICATION_FOREGROUND_ID, Noti.getLauncherIntent(this), PendingIntent.FLAG_UPDATE_CURRENT))
-                .build();
-        startForeground(NOTIFICATION_FOREGROUND_ID, notification);
-    }
-
-    private void notiMessages(List<NotificationMessage> messages){
-        for(NotificationMessage m : messages)
-            notiMessage(m);
-    }
-
-    private void notiMessage(NotificationMessage m ){
-        Noti.showNotification(m.getMessage(), m.getId());
-    }
-
-
-    private List<NotificationMessage> getNeedAlarmMessage(List<NotificationMessage> mMessages){
-        List<NotificationMessage> messages = getNotFinishMessage(mMessages);
-        Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int min = c.get(Calendar.MINUTE);
-        int nowTime = hour*100 + min ;
-        for (NotificationMessage m : mMessages) {
-            int messagealarmtime = m.getHour()*100 + m.getMin();
-            LOG.d(TAG,"messagealarmtime : " + messagealarmtime +  " \n");
-            LOG.d(TAG,"nowTime : " + nowTime +  " \n");
-            if(messagealarmtime>nowTime)
-                messages.remove(m);
-        }
-        return messages;
-    }
-    private List<NotificationMessage> getNotFinishMessage(List<NotificationMessage> mMessages) {
-        List<NotificationMessage> messages = new ArrayList<NotificationMessage>();
-        for (NotificationMessage m : mMessages) {
-            if(m.getState()== NotificationMessageRM.STATE_NOT_FINISH){
-                messages.add(m);
-            }
-        }
-        LOG.d(TAG,"mMessages size : " + mMessages.size());
-        LOG.d(TAG,"getNotFinishMessage size : " + messages.size());
-        return messages;
-    }
-
     private void speakDefaultMessage(List<NotificationMessage> messages){
         if(messages!=null && messages.size()>0) {
-            MediaPlayer mp = MediaPlayer.create(this, R.raw.nottodo);
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.todo_voice);
             mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
@@ -150,5 +136,54 @@ public class AlarmMessageService extends Service {
             });
             mp.start();
         }
+    }
+
+    public static Intent getSettingChangeIntent(Context context){
+        Intent i = new Intent(context, AlarmMessageService.class);
+        i.setAction(ACTION_SETTING_CHANGE);
+        return i;
+    }
+
+    public static Intent getCancelAlarmIntent(Context context , NotificationMessage m){
+        Intent i = new Intent(context, AlarmMessageService.class);
+        i.setAction(ACTION_CANCEL_ALARM_BELL);
+        i.putExtra(MessageAlarm.EXTRA_ALARM_MESSAGE_ID_KEY , m.getId());
+        return i;
+    }
+
+    private void setupAlarm(){
+        for (NotificationMessage m : model.getMessages()) {
+            if (SettingConfig.getIsBellOpen(this))
+                mMessageAlarm.setDailyAlarm(m);
+            else
+                mMessageAlarm.cancelDailyAlarm(m.getId());
+        }
+    }
+    private void showAlarmView(String message){
+        View v = LayoutInflater.from(this).inflate(R.layout.window_bell_cancel_view , null);
+        TextView tv = (TextView)v.findViewById(R.id.tv_title);
+        tv.setText(message);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mMediaPlayer!=null) {
+                    mMediaPlayer.stop();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
+                WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+                wm.removeView(v);
+            }
+        });
+
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
+            params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            params.gravity = Gravity.CENTER;
+            wm.addView(v, params);
     }
 }

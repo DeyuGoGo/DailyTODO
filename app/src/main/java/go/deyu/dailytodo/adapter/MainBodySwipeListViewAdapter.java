@@ -41,13 +41,16 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
     private LayoutInflater mLayoutInflater;
     private List<NotificationMessageRM> mMessages ;
     private ArrayList<SwipeLayoutListener> mListeners ;
+    private int mMessageLimitSize = 10;
 
 
     public MainBodySwipeListViewAdapter(Activity activity, List<NotificationMessageRM> messages){
+
         this.mContext = activity;
         this.mLayoutInflater = activity.getLayoutInflater();
         this.mMessages = messages;
         this.mListeners = new ArrayList<SwipeLayoutListener>();
+        mMessageLimitSize = activity.getResources().getInteger(R.integer.int_message_limit_size);
     }
 
     public void registerSwipeLayoutListener(SwipeLayoutListener listener){
@@ -111,8 +114,8 @@ public class MainBodySwipeListViewAdapter extends BaseSwipeAdapter {
     private void setViewValue(ViewHolder viewHolder , int position , NotificationMessageRM nm ){
         viewHolder.setPosition(position);
 //        in swipelayout ellipsize is not work ... so do it my self
-        if(nm.getMessage().length()>7){
-            viewHolder.message_Tv.setText(nm.getMessage().substring(0,6) + "...");
+        if(nm.getMessage().length()>mMessageLimitSize){
+            viewHolder.message_Tv.setText(nm.getMessage().substring(0,mMessageLimitSize-1) + "...");
         }else{
             viewHolder.message_Tv.setText(nm.getMessage());
         }

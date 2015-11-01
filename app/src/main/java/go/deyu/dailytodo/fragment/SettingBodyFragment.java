@@ -8,6 +8,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import butterknife.Bind;
+import go.deyu.dailytodo.AlarmMessageService;
 import go.deyu.dailytodo.R;
 import go.deyu.dailytodo.SettingConfig;
 import go.deyu.util.LOG;
@@ -18,7 +19,9 @@ import go.deyu.util.LOG;
 public class SettingBodyFragment extends BaseMessageFragment {
 
     private final String TAG = getClass().getSimpleName();
+
     @Bind(R.id.switch_voice_open)Switch mSwitchVoiceOpen;
+    @Bind(R.id.switch_bell)Switch mSwitchBell;
 
 
     @Override
@@ -27,8 +30,14 @@ public class SettingBodyFragment extends BaseMessageFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         mSwitchVoiceOpen.setChecked(SettingConfig.getIsVoiceOpen(getActivity()));
         mSwitchVoiceOpen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -37,6 +46,16 @@ public class SettingBodyFragment extends BaseMessageFragment {
                 SettingConfig.setIsVoiceOpen(getActivity(), isChecked);
             }
         });
+
+        mSwitchBell.setChecked(SettingConfig.getIsBellOpen(getActivity()));
+        mSwitchBell.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SettingConfig.setIsBelleOpen(getActivity(), isChecked);
+                getActivity().startService(AlarmMessageService.getSettingChangeIntent(getActivity()));
+            }
+        });
     }
+
 }
 

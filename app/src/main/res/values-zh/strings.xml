@@ -9,6 +9,7 @@
     <string name="alarm_time">提醒時間</string>
     <string name="setting">設定</string>
     <string name="voice_alarm">聲音提醒</string>
+    <string name="bell_alarm">鬧鐘提醒</string>
     <string name="finish">完成</string>
     <string name="todaynotfinish">還有%d件事沒做</string>
     <string name="delete">刪除</string>

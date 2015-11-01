@@ -62,6 +62,17 @@ public class MessageModel implements MessageModelInterface
         onChange();
     }
 
+    @Override
+    public NotificationMessageORM findMessageById(int messageid) {
+        try{
+            NotificationMessageORM n = messageDao.queryForId(messageid);
+            return n;
+        } catch (SQLException e){
+            LOG.d(TAG, "changeMessageState Exception : " + e);
+        }
+        return null;
+    }
+
     public void changeMessageState(int id , int state){
         try{
             LOG.d(TAG, "changeMessageState id " + id + " state : " + state);

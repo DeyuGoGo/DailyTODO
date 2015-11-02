@@ -31,7 +31,7 @@ public class MessageModelRM implements MessageModelInterface
         init();
     }
     private void init(){
-        realm = Realm.getInstance(mContext);
+        realm = Realm.getDefaultInstance();
         refreshMessage();
     }
 
@@ -142,7 +142,12 @@ public class MessageModelRM implements MessageModelInterface
         }
     }
 
-//    拿目前列表中最大的ID+1去當作新資料的ID。
+    @Override
+    public void close() {
+        if(realm!=null)realm.close();
+    }
+
+    //    拿目前列表中最大的ID+1去當作新資料的ID。
     private int getIncrementID(){
         int i = 0 ;
         if(mMessages!=null && mMessages.size()>0){

@@ -168,4 +168,9 @@ public class MessageModel implements MessageModelInterface
             DailyCheck.updateDayTime();
         }
     }
+
+    @Override
+    public void close() {
+
+    }
 }

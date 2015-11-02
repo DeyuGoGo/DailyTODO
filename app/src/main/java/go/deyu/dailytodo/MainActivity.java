@@ -131,4 +131,10 @@ public class MainActivity extends FragmentActivity implements HeadBodyFragmentRe
             mAdView.loadAd(request);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(messageModel!=null)
+            messageModel.close();
+    }
 }

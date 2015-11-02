@@ -3,6 +3,7 @@ package go.deyu.dailytodo;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.view.Gravity;
@@ -72,7 +73,7 @@ public class AlarmMessageService extends Service {
         if(intent.getAction().equals(ACTION_START_ALARM)){
             model.checkChangeDay();
             mMessageNotificationController.showOverTimeNotfinishMessage();
-            startForeground(NOTIFICATION_FOREGROUND_ID, mMessageNotificationController.getForegroundNotification(NOTIFICATION_FOREGROUND_ID));
+//            startForeground(NOTIFICATION_FOREGROUND_ID, mMessageNotificationController.getForegroundNotification(NOTIFICATION_FOREGROUND_ID));
             if(SettingConfig.getIsVoiceOpen(this))speakDefaultMessage(mMessageNotificationController.getNeedAlarmMessages());
             setupAlarm();
         }
@@ -159,6 +160,7 @@ public class AlarmMessageService extends Service {
                 mMessageAlarm.cancelDailyAlarm(m.getId());
         }
     }
+
     private void showAlarmView(String message){
         View v = LayoutInflater.from(this).inflate(R.layout.window_bell_cancel_view , null);
         TextView tv = (TextView)v.findViewById(R.id.tv_title);
@@ -166,7 +168,7 @@ public class AlarmMessageService extends Service {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mMediaPlayer!=null) {
+                if (mMediaPlayer != null) {
                     mMediaPlayer.stop();
                     mMediaPlayer.release();
                     mMediaPlayer = null;
@@ -175,7 +177,6 @@ public class AlarmMessageService extends Service {
                 wm.removeView(v);
             }
         });
-
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
             params.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -183,6 +184,7 @@ public class AlarmMessageService extends Service {
             params.type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
             params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            params.format = PixelFormat.TRANSPARENT;
             params.gravity = Gravity.CENTER;
             wm.addView(v, params);
     }

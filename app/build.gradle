@@ -8,8 +8,8 @@ android {
         applicationId "go.deyu.dailytodo"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.3"
     }
     buildTypes {
         release {
@@ -47,6 +47,6 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'io.realm:realm-android:0.82.1'
+    compile 'io.realm:realm-android:0.84.1'
     compile 'com.daimajia.swipelayout:library:1.2.0@aar'
 }

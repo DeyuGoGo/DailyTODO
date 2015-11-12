@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 
 import go.deyu.dailytodo.AlarmMessageService;
-import go.deyu.dailytodo.data.NotificationMessageRM;
+import go.deyu.dailytodo.data.NotificationMessageRMM;
 import go.deyu.dailytodo.model.MessageRMMigration;
 import go.deyu.util.AppContextSingleton;
 import go.deyu.util.LOG;
@@ -36,7 +36,7 @@ public class App extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .name("message.realm")
                 .schemaVersion(1)
-                .setModules(new NotificationMessageRM())
+                .setModules(new NotificationMessageRMM())
                 .migration(new MessageRMMigration())
                 .build();
         Realm.setDefaultConfiguration(config);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">每天要做的事</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">哈囉</string>
     <string name="action_settings">設定</string>
     <string name="input_message">請輸入提醒事項</string>
     <string name="confirm">確定</string>

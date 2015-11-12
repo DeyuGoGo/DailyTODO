@@ -46,7 +46,6 @@ public class MessageAlarmGo implements MessageAlarm{
         PendingIntent pi = getMessageIntent(message.getId());
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
-
     }
 
     @Override

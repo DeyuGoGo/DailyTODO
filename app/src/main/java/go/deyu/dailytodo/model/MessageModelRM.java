@@ -12,10 +12,12 @@ import go.deyu.util.LOG;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.annotations.RealmModule;
 
 /**
  * Created by huangeyu on 15/5/19.
  */
+
 public class MessageModelRM implements MessageModelInterface
 {
 
@@ -103,7 +105,7 @@ public class MessageModelRM implements MessageModelInterface
         RealmQuery<NotificationMessageRM> query = realm.where(NotificationMessageRM.class);
         NotificationMessageRM rs = query.equalTo("id", id).findFirst();
         realm.beginTransaction();
-        rs.removeFromRealm();
+        rs.deleteFromRealm();
         realm.commitTransaction();
         onChange();
     }

@@ -36,8 +36,6 @@ public class App extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .name("message.realm")
                 .schemaVersion(1)
-                .setModules(new NotificationMessageRM())
-                .migration(new MessageRMMigration())
                 .build();
         Realm.setDefaultConfiguration(config);
     }

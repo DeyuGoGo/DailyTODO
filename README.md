@@ -1,4 +1,4 @@
-# DailyTODO
+# DailyTODO  [![Build Status](https://travis-ci.org/DeyuGoGo/DailyTODO.svg?branch=master)](https://travis-ci.org/DeyuGoGo/DailyTODO)
 
 每天要做的事的App。
 

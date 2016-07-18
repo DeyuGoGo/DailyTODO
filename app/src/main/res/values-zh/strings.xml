@@ -13,5 +13,7 @@
     <string name="finish">完成</string>
     <string name="todaynotfinish">還有%d件事沒做</string>
     <string name="delete">刪除</string>
+    <string name="banner_ad_unit_id">ca-app-pub-9829418644772076/1192964746</string>
+    <string name="banner_ad_unit_id_test">ca-app-pub-3940256099942544/6300978111</string>
 
 </resources>
